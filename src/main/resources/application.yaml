@@ -1,0 +1,2127 @@
+openapi: 3.0.3
+info:
+  title: API REST Snugplace
+  version: 1.0.0
+  description: |
+    API REST para la gestión de alojamientos, reservas y comentarios con roles para usuarios y anfitriones. Desarrollada con Spring Boot y Angular.
+    
+    ## Funcionalidades principales:
+    - Gestión de usuarios con roles (Usuario/Anfitrión)
+    - CRUD de alojamientos
+    - Búsqueda con criterios sobre los alojamientos
+    - Sistema para las reservas con validaciones
+    - Comentarios y calificaciones sobre los alojamientos
+    - Sistema de notificaciones
+    - Métricas para anfitriones sobre sus alojamientos
+    
+    ## Autenticación:
+    La API utiliza JWT (JSON Web Tokens) para la autenticación de usuarios.
+
+security:
+  - bearerAuth: []
+
+paths:
+  # ==================== AUTENTICACIÓN Y USUARIOS ====================
+  /auth/register:
+    post:
+      tags:
+        - Autenticación
+      summary: Registrar nuevo usuario
+      description: Permite registrar un nuevo usuario con rol USUARIO o ANFITRION
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegistroUsuarioRequest'
+      responses:
+        '201':
+          description: Usuario registrado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          description: Datos inválidos o email ya existe
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorServer'
+        '503':
+          description: Servicio no disponible o en mantenimiento
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorService'
+
+  /auth/login:
+    post:
+      tags:
+        - Autenticación
+      summary: Iniciar sesión
+      description: Autenticar usuario y obtener token JWT
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Inicio de sesión exitoso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          description: Solicitud inválida (campos faltantes o mal formateados)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Credenciales inválidas o incorrectas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Usuario no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorServer'
+        '503':
+          description: Servicio no disponible o en mantenimiento
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorService'
+
+  /auth/recover-password:
+    post:
+      tags:
+        - Autenticación
+      summary: Solicitar recuperación de contraseña
+      description: Envía código de recuperación al email del usuario (Válido por 15 minutos)
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: usuario@ejemplo.com
+              required:
+                - email
+      responses:
+        '200':
+          description: Código enviado exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mensaje:
+                    type: string
+                    example: "Código de recuperación enviado al email"
+        '400':
+          description: Solicitud inválida (campos faltantes o mal formateados)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Email no encontrado
+        '429':
+          description: Demasiadas solicitudes. El usuario ha superado el límite permitido.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ManyRequests'
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorServer'
+        '503':
+          description: Servicio no disponible o en mantenimiento
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorService'
+
+  /auth/reset-password:
+    post:
+      tags:
+        - Autenticación
+      summary: Restablecer contraseña
+      description: Restablece la contraseña usando el código de recuperación
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RestablecerPasswordRequest'
+      responses:
+        '200':
+          description: Contraseña restablecida exitosamente
+        '400':
+          description: Código inválido o expirado
+        '401':
+          description: El token no es válido
+        '410':
+          description: El token expiró
+        '422':
+          description: La contraseña nueva es debil
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorServer'
+
+
+  /users/profile:
+    get:
+      tags:
+        - Usuarios
+      summary: Obtener perfil del usuario autenticado
+      responses:
+        '200':
+          description: Perfil del usuario
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsuarioResponse'
+        '400':
+          description: El usuario no ha sido autenticado
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorServer'
+
+
+    patch:
+      tags:
+        - Usuarios
+      summary: Actualizar perfil del usuario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActualizarPerfilRequest'
+      responses:
+        '200':
+          description: Perfil actualizado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsuarioResponse'
+        '400':
+          description: Error al actualizar el perfil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorServer'
+
+  /users/change-password:
+    patch:
+      tags:
+        - Usuarios
+      summary: Cambiar contraseña (usuario autenticado)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CambiarPasswordRequest'
+      responses:
+        '200':
+          description: Contraseña cambiada exitosamente
+        '400':
+          description: Contraseña actual incorrecta
+        '401':
+          description: El usuario no está autenticado
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorServer'
+
+  # ==================== ALOJAMIENTOS ====================
+  /accommodations:
+    post:
+      tags:
+        - Alojamientos
+      summary: Crear nuevo alojamiento
+      description: Solo usuarios con rol ANFITRION pueden crear alojamientos
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CrearAlojamientoRequest'
+      responses:
+        '201':
+          description: Alojamiento creado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AlojamientoResponse'
+        '400':
+          description: Solicitud inválida (campos faltantes o mal formateados)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: El ususario no tiene los permisos necesarios
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorServer'
+        '503':
+          description: Servicio no disponible o en mantenimiento
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorService'
+
+    get:
+      tags:
+        - Alojamientos
+      summary: Buscar alojamientos con filtros
+      description: Búsqueda de alojamientos con filtros avanzados y paginación
+      security: []
+      parameters:
+        - name: ciudad
+          in: query
+          description: Ciudad a buscar
+          schema:
+            type: string
+            example: "Bogotá"
+        - name: fechaCheckIn
+          in: query
+          description: Fecha de entrada
+          schema:
+            type: string
+            format: date
+            example: "2024-12-01"
+        - name: fechaCheckOut
+          in: query
+          description: Fecha de salida
+          schema:
+            type: string
+            format: date
+            example: "2024-12-05"
+        - name: precioMinimo
+          in: query
+          description: Precio mínimo por noche
+          schema:
+            type: number
+            example: 50000
+        - name: precioMaximo
+          in: query
+          description: Precio máximo por noche
+          schema:
+            type: number
+            example: 200000
+        - name: numeroHuespedes
+          in: query
+          description: Número de huéspedes
+          schema:
+            type: integer
+            minimum: 1
+            example: 2
+        - name: servicios
+          in: query
+          description: Servicios separados por coma
+          schema:
+            type: string
+            example: "Bar,Tina,Sauna"
+        - name: pagina
+          in: query
+          description: Número de página (empezando en 0)
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: Lista de alojamientos encontrados
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AlojamientosPageResponse'
+        '404':
+          description: Lista de alojamientos no encontrados
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorServer'
+        '503':
+          description: Servicio no disponible o en mantenimiento
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorService'
+
+
+
+  /accommodations/{id}:
+    get:
+      tags:
+        - Alojamientos
+      summary: Obtener detalle de alojamiento
+      description: Obtiene información completa del alojamiento incluyendo imágenes, servicios y comentarios
+      security: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Detalle del alojamiento
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AlojamientoDetalleResponse'
+        '404':
+          description: Alojamiento no encontrado
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorServer'
+
+    patch:
+      tags:
+        - Alojamientos
+      summary: Actualizar alojamiento
+      description: Solo el anfitrión propietario puede actualizar el alojamiento
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActualizarAlojamientoRequest'
+      responses:
+        '200':
+          description: Alojamiento actualizado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AlojamientoResponse'
+        '401':
+          description: No tiene permisos para editar este alojamiento
+        '404':
+          description: Alojamiento no encontrado
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorServer'
+
+    delete:
+      tags:
+        - Alojamientos
+      summary: Eliminar alojamiento (soft delete)
+      description: Solo si no tiene reservas futuras. Se marca como eliminado en BD
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Alojamiento eliminado exitosamente
+        '400':
+          description: No se puede eliminar, tiene reservas futuras
+        '403':
+          description: No tiene permisos para eliminar este alojamiento
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorServer'
+
+  /accommodations/{id}/availability:
+    get:
+      tags:
+        - Alojamientos
+      summary: Verificar disponibilidad de alojamiento
+      description: Verifica si el alojamiento está disponible en un rango de fechas
+      security: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: fechaCheckIn
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: fechaCheckOut
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Estado de disponibilidad
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DisponibilidadResponse'
+        '400':
+          description: Solicitud inválida (fechas mal formateadas)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorServer'
+
+  /my-accommodations:
+    get:
+      tags:
+        - Alojamientos
+      summary: Obtener alojamientos del anfitrión autenticado
+      description: Lista los alojamientos del anfitrión con paginación
+      parameters:
+        - name: pagina
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: tamaño
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Lista de alojamientos del anfitrión
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AlojamientosPageResponse'
+        '401':
+          description: El usuario no cuenta con los permisos necesarios
+        '404':
+          description: Los alojamientos no han sido encontrados
+
+  # ==================== RESERVAS ====================
+  /bookings:
+    post:
+      tags:
+        - Reservas
+      summary: Crear nueva reserva
+      description: Permite al usuario crear una nueva reserva
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CrearReservaRequest'
+      responses:
+        '201':
+          description: Reserva creada exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReservaResponse'
+        '400':
+          description: Error en validación (fechas, disponibilidad, capacidad)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorServer'
+
+    get:
+      tags:
+        - Reservas
+      summary: Obtener reservas del usuario autenticado
+      description: Lista las reservas del usuario con filtros y paginación
+      parameters:
+        - name: estado
+          in: query
+          description: Filtrar por estado de reserva
+          schema:
+            type: string
+            enum: [PENDIENTE, CONFIRMADA, CANCELADA, COMPLETADA]
+        - name: fechaDesde
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: fechaHasta
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: pagina
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: tamaño
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Lista de reservas del usuario
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReservasPageResponse'
+        '401':
+          description: El usuario no ha sido autenticado
+        '404':
+          description: La lista de las reservas no fue encontrada
+
+  /bookings/{id}:
+    get:
+      tags:
+        - Reservas
+      summary: Obtener detalle de reserva
+      description: Solo el usuario o anfitrión involucrado puede ver la reserva
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Detalle de la reserva
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReservaDetalleResponse'
+        '403':
+          description: No tiene permisos para ver esta reserva
+        '404':
+          description: Reserva no encontrada
+
+  /reservas/{id}/cancel:
+    put:
+      tags:
+        - Reservas
+      summary: Cancelar reserva
+      description: Permite cancelar reserva hasta 48 horas antes del check-in
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                motivo:
+                  type: string
+                  maxLength: 200
+                  example: "Cambio de planes"
+      responses:
+        '200':
+          description: Reserva cancelada exitosamente
+        '400':
+          description: No se puede cancelar (fuera del tiempo límite)
+        '403':
+          description: No tiene permisos para cancelar esta reserva
+
+  /reservas/{id}/confirm:
+    put:
+      tags:
+        - Reservas
+      summary: Confirmar reserva (solo anfitrión)
+      description: Permite al anfitrión confirmar una reserva pendiente
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Reserva confirmada exitosamente
+        '403':
+          description: No tiene permisos para confirmar esta reserva
+        '404':
+          description: Reserva no encontrada
+
+  /reservas/{id}/reject:
+    put:
+      tags:
+        - Reservas
+      summary: Rechazar reserva (solo anfitrión)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                motivo:
+                  type: string
+                  maxLength: 200
+                  example: "Fechas no disponibles"
+      responses:
+        '200':
+          description: Reserva rechazada exitosamente
+        '403':
+          description: El usuario no cuenta con los permisos necesarios
+
+  /my-bookings-host:
+    get:
+      tags:
+        - Reservas
+      summary: Obtener reservas de alojamientos del anfitrión
+      description: Lista las reservas de todos los alojamientos del anfitrión
+      parameters:
+        - name: alojamientoId
+          in: query
+          description: Filtrar por alojamiento específico
+          schema:
+            type: integer
+            format: int64
+        - name: estado
+          in: query
+          schema:
+            type: string
+            enum: [PENDIENTE, CONFIRMADA, CANCELADA, COMPLETADA]
+        - name: fechaDesde
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: fechaHasta
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: pagina
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: tamaño
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Lista de reservas de los alojamientos del anfitrión
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReservasPageResponse'
+
+  # ==================== COMENTARIOS ====================
+  /comments:
+    post:
+      tags:
+        - Comentarios
+      summary: Crear nuevo comentario
+      description: Solo usuarios que completaron una estadía pueden comentar
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CrearComentarioRequest'
+      responses:
+        '201':
+          description: Comentario creado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ComentarioResponse'
+        '400':
+          description: No puede comentar (reserva no completada o ya comentó)
+        '500':
+          description: Error del servidor
+
+  /accommodations/{id}/comments:
+    get:
+      tags:
+        - Comentarios
+      summary: Obtener comentarios de alojamiento
+      description: Lista los comentarios de un alojamiento ordenados por fecha
+      security: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID del alojamiento
+          schema:
+            type: integer
+            format: int64
+        - name: pagina
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: tamaño
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Lista de comentarios del alojamiento
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ComentariosPageResponse'
+        '404':
+          description: Comentarios del alojamiento no encontrados
+        '500':
+          description: Error del servidor
+
+  /comments/{id}/answer:
+    post:
+      tags:
+        - Comentarios
+      summary: Responder a comentario (solo anfitrión)
+      description: Permite al anfitrión responder a un comentario de su alojamiento
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                respuesta:
+                  type: string
+                  maxLength: 300
+                  example: "Gracias por tu comentario, esperamos verte pronto"
+              required:
+                - respuesta
+      responses:
+        '201':
+          description: Respuesta creada exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaComentarioResponse'
+        '403':
+          description: No tiene permisos para responder este comentario
+
+  # ==================== NOTIFICACIONES ====================
+  /notifications:
+    get:
+      tags:
+        - Notificaciones
+      summary: Obtener notificaciones del usuario
+      parameters:
+        - name: pagina
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: tamaño
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Lista de notificaciones del usuario
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificacionesPageResponse'
+        '404':
+          description: Notifiaciones del usuario no encontradas
+
+  /notifications/unread/count:
+    get:
+      tags:
+        - Notificaciones
+      summary: Obtener contador de notificaciones no leídas
+      responses:
+        '200':
+          description: Número de notificaciones no leídas
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  noLeidas:
+                    type: integer
+                    example: 5
+
+  /notifications/markas-read:
+    put:
+      tags:
+        - Notificaciones
+      summary: Marcar notificaciones como leídas
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: integer
+                format: int64
+              example: [1, 2, 3]
+      responses:
+        '200':
+          description: Notificaciones marcadas como leídas exitosamente
+
+  # ==================== MÉTRICAS (ANFITRIONES) ====================
+  /metrics/accommodations/{id}:
+    get:
+      tags:
+        - Métricas
+      summary: Obtener métricas de alojamiento
+      description: Métricas básicas por alojamiento para anfitriones
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: fechaDesde
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+            example: "2024-01-01"
+        - name: fechaHasta
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+            example: "2024-12-31"
+      responses:
+        '200':
+          description: Métricas del alojamiento
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MetricasAlojamientoResponse'
+        '403':
+          description: No tiene permisos para ver métricas de este alojamiento
+        '404':
+          description: Metricas del alojamiento no encontradas
+
+  /metricas/summary:
+    get:
+      tags:
+        - Métricas
+      summary: Obtener resumen de métricas del anfitrión
+      description: Resumen general de todos los alojamientos del anfitrión
+      parameters:
+        - name: fechaDesde
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: fechaHasta
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Resumen de métricas del anfitrión
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResumenMetricasResponse'
+        '401':
+          description: El usuario no cuenta con los permisos necesarios
+        '404':
+          description: Resumen de metricas no encontrado
+  # ==================== UPLOADS ====================
+  /uploads/images:
+    post:
+      tags:
+        - Uploads
+      summary: Subir imagen
+      description: Sube una imagen para alojamiento o perfil de usuario
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                archivo:
+                  type: string
+                  format: binary
+                  description: Archivo de imagen (JPG, PNG, WebP)
+                tipo:
+                  type: string
+                  enum: [alojamiento, perfil]
+                  description: Tipo de imagen
+              required:
+                - archivo
+                - tipo
+      responses:
+        '200':
+          description: Imagen subida exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  url:
+                    type: string
+                    example: "https://cdn.ejemplo.com/imagen123.jpg"
+                  nombreArchivo:
+                    type: string
+                    example: "imagen123.jpg"
+        '400':
+          description: Formato de archivo no válido
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorServer'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    # ==================== SCHEMAS DE AUTENTICACIÓN ====================
+    RegistroUsuarioRequest:
+      type: object
+      properties:
+        nombre:
+          type: string
+          minLength: 2
+          maxLength: 50
+          example: "Juan Pérez"
+        email:
+          type: string
+          format: email
+          example: "juan@ejemplo.com"
+        password:
+          type: string
+          minLength: 8
+          pattern: '^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d@$!%*?&]{8,}$'
+          example: "MiPassword123"
+        telefono:
+          type: string
+          pattern: '^(\+\d{1,3}[- ]?)?\d{10}$'
+          example: "+573001234567"
+        fechaNacimiento:
+          type: string
+          format: date
+          example: "1990-01-15"
+        rol:
+          type: string
+          enum: [USUARIO, ANFITRION]
+          example: "USUARIO"
+      required:
+        - nombre
+        - email
+        - password
+        - telefono
+        - fechaNacimiento
+        - rol
+
+    LoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          example: "juan@ejemplo.com"
+        password:
+          type: string
+          example: "MiPassword123"
+      required:
+        - email
+        - password
+
+    AuthResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        usuario:
+          $ref: '#/components/schemas/UsuarioResponse'
+        expiresIn:
+          type: integer
+          example: 86400
+          description: "Tiempo de expiración del token en segundos"
+
+    RestablecerPasswordRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          example: "juan@ejemplo.com"
+        codigo:
+          type: string
+          minLength: 6
+          maxLength: 6
+          example: "123456"
+        nuevaPassword:
+          type: string
+          minLength: 8
+          example: "NuevaPassword123"
+      required:
+        - email
+        - codigo
+        - nuevaPassword
+
+    # ==================== SCHEMAS DE USUARIOS ====================
+    UsuarioResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        nombre:
+          type: string
+          example: "Juan Pérez"
+        email:
+          type: string
+          example: "juan@ejemplo.com"
+        telefono:
+          type: string
+          example: "+573001234567"
+        fechaNacimiento:
+          type: string
+          format: date
+          example: "1990-01-15"
+        fotoPerfil:
+          type: string
+          nullable: true
+          example: "https://cdn.ejemplo.com/perfil123.jpg"
+        rol:
+          type: string
+          enum: [USUARIO, ANFITRION]
+          example: "USUARIO"
+        fechaCreacion:
+          type: string
+          format: date-time
+          example: "2024-01-15T10:30:00"
+
+    ActualizarPerfilRequest:
+      type: object
+      properties:
+        nombre:
+          type: string
+          minLength: 2
+          maxLength: 50
+          example: "Juan Carlos Pérez"
+        telefono:
+          type: string
+          example: "+573001234567"
+        fotoPerfil:
+          type: string
+          nullable: true
+          example: "https://cdn.ejemplo.com/perfil123.jpg"
+
+    CambiarPasswordRequest:
+      type: object
+      properties:
+        passwordActual:
+          type: string
+          example: "PasswordAnterior123"
+        nuevaPassword:
+          type: string
+          minLength: 8
+          pattern: '^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d@$!%*?&]{8,}$'
+          example: "NuevaPassword123"
+      required:
+        - passwordActual
+        - nuevaPassword
+
+    UsuarioResumenResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 5
+        nombre:
+          type: string
+          example: "Juan Pérez"
+        email:
+          type: string
+          format: email
+          example: "juan.perez@email.com"
+
+    AlojamientoResumenResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 45
+        titulo:
+          type: string
+          example: "Apartamento en el centro de Bogotá"
+        ciudad:
+          type: string
+          example: "Bogotá"
+        precioPorNoche:
+          type: number
+          format: double
+          example: 120.0
+
+    ComentarioResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 2001
+        calificacion:
+          type: integer
+          minimum: 1
+          maximum: 5
+          example: 4
+        comentario:
+          type: string
+          maxLength: 500
+          example: "Muy buena ubicación y excelente atención del anfitrión."
+        creadoEn:
+          type: string
+          format: date-time
+          example: "2025-09-20T14:30:00Z"
+
+
+    # ==================== SCHEMAS DE ALOJAMIENTOS ====================
+    CrearAlojamientoRequest:
+      type: object
+      properties:
+        titulo:
+          type: string
+          minLength: 5
+          maxLength: 100
+          example: "Hermoso apartamento en el centro"
+        descripcion:
+          type: string
+          minLength: 20
+          maxLength: 1000
+          example: "Acogedor apartamento con vista a la ciudad..."
+        ciudad:
+          type: string
+          maxLength: 50
+          example: "Bogotá"
+        direccion:
+          type: string
+          maxLength: 200
+          example: "Carrera 7 # 45-32, La Candelaria"
+        latitud:
+          type: number
+          format: double
+          example: 4.5981
+        longitud:
+          type: number
+          format: double
+          example: -74.0758
+        precioPorNoche:
+          type: number
+          minimum: 1
+          example: 120000
+        capacidadMaxima:
+          type: integer
+          minimum: 1
+          maximum: 20
+          example: 4
+        imagenes:
+          type: array
+          items:
+            type: string
+          minItems: 1
+          maxItems: 10
+          example: ["https://cdn.ejemplo.com/img1.jpg", "https://cdn.ejemplo.com/img2.jpg"]
+        imagenPrincipal:
+          type: string
+          example: "https://cdn.ejemplo.com/img1.jpg"
+        serviciosIds:
+          type: array
+          items:
+            type: string
+            format: int64
+          example: ["Tina de baño", "Calefaccion", "Cocina"]
+      required:
+        - titulo
+        - descripcion
+        - ciudad
+        - direccion
+        - latitud
+        - longitud
+        - precioP
+
+    AlojamientoResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "aloj_12345"
+        titulo:
+          type: string
+          example: "Hermosa cabaña en el Quindío"
+        descripcion:
+          type: string
+          example: "Cabaña acogedora con vista a los cafetales, equipada con WiFi y piscina."
+        direccion:
+          type: string
+          example: "Vereda La Playa, Armenia, Quindío, Colombia"
+        precioPorNoche:
+          type: number
+          format: float
+          example: 250000
+        capacidad:
+          type: integer
+          example: 4
+        categoria:
+          type: string
+          example: "Cabaña"
+        imagenes:
+          type: array
+          items:
+            type: string
+            format: uri
+            example: "https://storage.googleapis.com/alojamientos/img123.jpg"
+        promedioCalificacion:
+          type: number
+          format: float
+          example: 4.7
+        numeroReservas:
+          type: integer
+          example: 12
+        estado:
+          type: string
+          enum: [PUBLICADO, RESERVADO, CANCELADO]
+          example: "PUBLICADO"
+        host:
+          type: object
+          properties:
+            id:
+              type: string
+              example: "usr_56789"
+            nombre:
+              type: string
+              example: "Juan Pérez"
+            email:
+              type: string
+              example: "juanperez@mail.com"
+      required:
+        - id
+        - titulo
+        - descripcion
+        - direccion
+        - precioPorNoche
+        - capacidad
+        - categoria
+        - estado
+        - host
+    AlojamientosPageResponse:
+      type: object
+      properties:
+        content:
+          type: array
+          description: Lista de alojamientos que cumplen con los filtros
+          items:
+            $ref: '#/components/schemas/AlojamientoResponse'
+        page:
+          type: integer
+          example: 0
+          description: Número de la página actual (0-indexed)
+        size:
+          type: integer
+          example: 10
+          description: Cantidad de alojamientos por página
+        totalElements:
+          type: integer
+          example: 125
+          description: Total de alojamientos encontrados con los filtros
+        totalPages:
+          type: integer
+          example: 13
+          description: Total de páginas disponibles
+        last:
+          type: boolean
+          example: false
+          description: Indica si es la última página
+        first:
+          type: boolean
+          example: true
+          description: Indica si es la primera página
+        empty:
+          type: boolean
+          example: false
+          description: Indica si la lista de alojamientos está vacía
+    AlojamientoDetalleResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 101
+        titulo:
+          type: string
+          example: "Casa campestre con piscina"
+        descripcion:
+          type: string
+          example: "Hermosa casa campestre ubicada en las afueras de Armenia, con piscina privada y zona BBQ."
+        ubicacion:
+          type: object
+          properties:
+            ciudad:
+              type: string
+              example: "Armenia"
+            direccion:
+              type: string
+              example: "Km 5 vía a Montenegro, Quindío"
+            latitud:
+              type: number
+              format: double
+              example: 4.517
+            longitud:
+              type: number
+              format: double
+              example: -75.703
+        precioPorNoche:
+          type: number
+          format: double
+          example: 150000
+        capacidadMaxima:
+          type: integer
+          example: 6
+        servicios:
+          type: array
+          items:
+            type: string
+          example: ["WiFi", "Piscina", "Parqueadero", "Mascotas permitidas"]
+        imagenes:
+          type: array
+          items:
+            type: string
+            format: url
+          example:
+            - "https://storage.googleapis.com/app/alojamientos/101/img1.jpg"
+            - "https://storage.googleapis.com/app/alojamientos/101/img2.jpg"
+        anfitrion:
+          type: object
+          properties:
+            id:
+              type: integer
+              example: 25
+            nombre:
+              type: string
+              example: "Carlos Pérez"
+            telefono:
+              type: string
+              example: "+57 3201234567"
+            descripcionPersonal:
+              type: string
+              example: "Anfitrión con más de 5 años de experiencia en turismo rural."
+        calificacionPromedio:
+          type: number
+          format: double
+          example: 4.6
+        comentarios:
+          type: array
+          description: Listado de comentarios más recientes
+          items:
+            $ref: '#/components/schemas/ComentarioResponse'
+        calendarioDisponibilidad:
+          type: array
+          description: Fechas ocupadas o reservadas
+          items:
+            type: string
+            format: date
+          example:
+            - "2025-09-01"
+            - "2025-09-05"
+            - "2025-09-06"
+        estado:
+          type: string
+          enum: [PUBLICADO, ELIMINADO]
+          example: "PUBLICADO"
+    ActualizarAlojamientoRequest:
+      type: object
+      description: Campos opcionales para actualizar un alojamiento existente
+      properties:
+        titulo:
+          type: string
+          example: "Apartamento moderno en el centro"
+          maxLength: 150
+        descripcion:
+          type: string
+          example: "Apartamento con 2 habitaciones, WiFi, aire acondicionado y balcón con vista."
+          maxLength: 2000
+        ciudad:
+          type: string
+          example: "Bogotá"
+        direccion:
+          type: string
+          example: "Calle 123 #45-67"
+        latitud:
+          type: number
+          format: double
+          example: 4.6097100
+        longitud:
+          type: number
+          format: double
+          example: -74.0817500
+        precioPorNoche:
+          type: number
+          format: double
+          example: 150000
+        capacidadMaxima:
+          type: integer
+          example: 4
+        servicios:
+          type: array
+          items:
+            type: string
+          example: ["WiFi", "Cocina", "Piscina"]
+        imagenes:
+          type: array
+          description: URLs de las imágenes (de Google Storage u otro servicio)
+          items:
+            type: string
+            format: uri
+          example:
+            - "https://storage.googleapis.com/app/alojamientos/apt123_main.jpg"
+            - "https://storage.googleapis.com/app/alojamientos/apt123_room.jpg"
+        estado:
+          type: string
+          description: Estado del alojamiento
+          enum: [ACTIVO, ELIMINADO]
+          example: ACTIVO
+      additionalProperties: false
+
+    DisponibilidadResponse:
+      type: object
+      properties:
+        alojamientoId:
+          type: integer
+          example: 101
+          description: Identificador del alojamiento consultado
+        disponible:
+          type: boolean
+          example: true
+          description: Indica si el alojamiento está disponible en el rango de fechas solicitado
+        checkIn:
+          type: string
+          format: date
+          example: "2025-09-10"
+          description: Fecha de inicio solicitada
+        checkOut:
+          type: string
+          format: date
+          example: "2025-09-15"
+          description: Fecha de fin solicitada
+        capacidadMaxima:
+          type: integer
+          example: 4
+          description: Número máximo de huéspedes permitidos en el alojamiento
+        huespedesSolicitados:
+          type: integer
+          example: 3
+          description: Número de huéspedes incluidos en la búsqueda
+
+    #================SQUEMAS PARA LAS RESERVAS=============================
+    CrearReservaRequest:
+      type: object
+      required:
+        - alojamientoId
+        - checkIn
+        - checkOut
+        - numeroHuespedes
+      properties:
+        alojamientoId:
+          type: integer
+          example: 101
+          description: ID del alojamiento a reservar
+        checkIn:
+          type: string
+          format: date
+          example: 2025-09-15
+          description: Fecha de inicio de la reserva (YYYY-MM-DD)
+        checkOut:
+          type: string
+          format: date
+          example: 2025-09-20
+          description: Fecha de finalización de la reserva (YYYY-MM-DD)
+        numeroHuespedes:
+          type: integer
+          minimum: 1
+          example: 3
+          description: Número de huéspedes en la reserva
+        notas:
+          type: string
+          maxLength: 250
+          example: "Llegaremos en la noche, por favor tener disponible la llave en portería."
+          description: Campo opcional para notas adicionales del huésped
+
+    ReservaResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 101
+          description: Identificador único de la reserva
+        usuario:
+          $ref: '#/components/schemas/UsuarioResumenResponse'
+        alojamiento:
+          $ref: '#/components/schemas/AlojamientoResumenResponse'
+        fechaCheckIn:
+          type: string
+          format: date
+          example: "2025-12-20"
+          description: Fecha de inicio de la reserva
+        fechaCheckOut:
+          type: string
+          format: date
+          example: "2025-12-25"
+          description: Fecha de fin de la reserva
+        numeroHuespedes:
+          type: integer
+          example: 4
+          description: Número de huéspedes incluidos en la reserva
+        estado:
+          type: string
+          enum: [PENDIENTE, CONFIRMADA, CANCELADA, COMPLETADA]
+          example: "PENDIENTE"
+          description: Estado actual de la reserva
+        precioTotal:
+          type: number
+          format: double
+          example: 750.00
+          description: Precio total calculado para la estancia
+        creadaEn:
+          type: string
+          format: date-time
+          example: "2025-08-31T14:35:00Z"
+          description: Fecha y hora en que se creó la reserva
+    ReservasPageResponse:
+      type: object
+      properties:
+        content:
+          type: array
+          description: Lista de reservas del usuario
+          items:
+            $ref: '#/components/schemas/ReservaResponse'
+        page:
+          type: integer
+          example: 0
+          description: Número de la página actual (0-indexed)
+        size:
+          type: integer
+          example: 10
+          description: Cantidad de reservas por página
+        totalElements:
+          type: integer
+          example: 42
+          description: Total de reservas encontradas para el usuario
+        totalPages:
+          type: integer
+          example: 5
+          description: Total de páginas disponibles
+        last:
+          type: boolean
+          example: false
+          description: Indica si es la última página
+        first:
+          type: boolean
+          example: true
+          description: Indica si es la primera página
+        empty:
+          type: boolean
+          example: false
+          description: Indica si la lista de reservas está vacía
+
+    ReservaDetalleResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 101
+          description: Identificador único de la reserva
+        usuario:
+          $ref: '#/components/schemas/UsuarioResumenResponse'
+        alojamiento:
+          $ref: '#/components/schemas/AlojamientoResumenResponse'
+        checkIn:
+          type: string
+          format: date
+          example: "2025-09-10"
+          description: Fecha de inicio de la reserva
+        checkOut:
+          type: string
+          format: date
+          example: "2025-09-15"
+          description: Fecha de finalización de la reserva
+        numHuespedes:
+          type: integer
+          example: 4
+          description: Número de huéspedes incluidos en la reserva
+        estado:
+          type: string
+          enum: [PENDIENTE, CONFIRMADA, CANCELADA, COMPLETADA]
+          example: "CONFIRMADA"
+          description: Estado actual de la reserva
+        precioTotal:
+          type: number
+          format: double
+          example: 550.75
+          description: Precio total calculado para la estancia
+        creadaEn:
+          type: string
+          format: date-time
+          example: "2025-08-31T12:45:00Z"
+          description: Fecha y hora en que se creó la reserva
+        comentarios:
+          type: array
+          description: Lista de comentarios realizados por el huésped (si aplica)
+          items:
+            $ref: '#/components/schemas/ComentarioResponse'
+
+    #================SQUEMA PARA LAS NOTIFICACIONES========================
+    NotificacionesPageResponse:
+      type: object
+      properties:
+        content:
+          type: array
+          description: Lista de notificaciones del usuario
+          items:
+            $ref: '#/components/schemas/NotificacionResponse'
+        page:
+          type: integer
+          example: 0
+          description: Número de la página actual (0-indexed)
+        size:
+          type: integer
+          example: 10
+          description: Cantidad de notificaciones por página
+        totalElements:
+          type: integer
+          example: 42
+          description: Total de notificaciones del usuario
+        totalPages:
+          type: integer
+          example: 5
+          description: Total de páginas disponibles
+        last:
+          type: boolean
+          example: false
+          description: Indica si es la última página
+        first:
+          type: boolean
+          example: true
+          description: Indica si es la primera página
+        empty:
+          type: boolean
+          example: false
+          description: Indica si la lista de notificaciones está vacía
+
+    NotificacionResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 301
+          description: Identificador único de la notificación
+        tipo:
+          type: string
+          enum: [RESERVA, COMENTARIO, REGISTRO, SISTEMA]
+          example: "RESERVA"
+          description: Tipo de notificación
+        mensaje:
+          type: string
+          example: "Tu reserva en 'Apartamento en Bogotá' ha sido confirmada."
+          description: Mensaje principal de la notificación
+        leido:
+          type: boolean
+          example: false
+          description: Indica si el usuario ya leyó la notificación
+        creadaEn:
+          type: string
+          format: date-time
+          example: "2025-08-31T14:30:00Z"
+          description: Fecha y hora en que se generó la notificación
+    #================SQUEMA PARA COMENTARIOS===============================
+    CrearComentarioRequest:
+      type: object
+      required:
+        - reservaId
+        - calificacion
+        - comentario
+      properties:
+        reservaId:
+          type: integer
+          example: 101
+          description: Identificador del alojamiento asociada al comentario
+        calificacion:
+          type: integer
+          minimum: 1
+          maximum: 5
+          example: 5
+          description: Calificación en estrellas (1-5)
+        comentario:
+          type: string
+          maxLength: 500
+          example: "La casa estaba impecable y el anfitrión fue muy amable. ¡Recomendado!"
+          description: Texto opcional del comentario (máximo 500 caracteres)
+    ComentariosPageResponse:
+      type: object
+      properties:
+        content:
+          type: array
+          description: Lista de comentarios del alojamiento
+          items:
+            $ref: '#/components/schemas/ComentarioResponse'
+        page:
+          type: integer
+          example: 0
+          description: Número de la página actual (0-indexed)
+        size:
+          type: integer
+          example: 10
+          description: Cantidad de comentarios por página
+        totalElements:
+          type: integer
+          example: 52
+          description: Total de comentarios encontrados
+        totalPages:
+          type: integer
+          example: 6
+          description: Total de páginas disponibles
+        last:
+          type: boolean
+          example: false
+          description: Indica si es la última página
+        first:
+          type: boolean
+          example: true
+          description: Indica si es la primera página
+        empty:
+          type: boolean
+          example: false
+          description: Indica si la lista de comentarios está vacía
+    RespuestaComentarioResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 501
+          description: Identificador único de la respuesta al comentario
+        comentarioId:
+          type: integer
+          example: 2001
+          description: Identificador del comentario al que se responde
+        anfitrion:
+          $ref: '#/components/schemas/UsuarioResumenResponse'
+        respuesta:
+          type: string
+          maxLength: 500
+          example: "Gracias por tu comentario, esperamos verte pronto"
+          description: Texto de la respuesta
+        creadoEn:
+          type: string
+          format: date-time
+          example: "2025-09-01T10:45:00Z"
+          description: Fecha y hora en que se creó la respuesta
+
+    #================SQUEMA PARA LAS METRICAS==============================
+    MetricasAlojamientoResponse:
+      type: object
+      properties:
+        alojamientoId:
+          type: integer
+          example: 45
+          description: Identificador único del alojamiento
+        totalReservas:
+          type: integer
+          example: 120
+          description: Número total de reservas en el periodo consultado
+        reservasPorEstado:
+          type: object
+          description: Cantidad de reservas agrupadas por estado
+          properties:
+            PENDIENTE:
+              type: integer
+              example: 5
+            CONFIRMADA:
+              type: integer
+              example: 80
+            CANCELADA:
+              type: integer
+              example: 20
+            COMPLETADA:
+              type: integer
+              example: 15
+        promedioCalificacion:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 5
+          example: 4.3
+          description: Promedio de calificaciones de los comentarios en el periodo
+        rangoConsultado:
+          type: object
+          description: Rango de fechas usado en el filtro
+          properties:
+            fechaInicio:
+              type: string
+              format: date
+              example: "2025-01-01"
+            fechaFin:
+              type: string
+              format: date
+              example: "2025-06-30"
+    ResumenMetricasResponse:
+      type: object
+      properties:
+        alojamientoId:
+          type: integer
+          example: 45
+          description: Identificador único del alojamiento
+        tituloAlojamiento:
+          type: string
+          example: "Apartamento en el centro de Bogotá"
+          description: Título del alojamiento
+        rangoFechas:
+          type: object
+          description: Rango de fechas aplicado para las métricas
+          properties:
+            fechaInicio:
+              type: string
+              format: date
+              example: "2025-01-01"
+            fechaFin:
+              type: string
+              format: date
+              example: "2025-12-31"
+        numeroReservas:
+          type: integer
+          example: 37
+          description: Número de reservas realizadas en el rango de fechas
+        reservasConfirmadas:
+          type: integer
+          example: 25
+          description: Número de reservas confirmadas en el rango
+        reservasCanceladas:
+          type: integer
+          example: 5
+          description: Número de reservas canceladas en el rango
+        reservasCompletadas:
+          type: integer
+          example: 7
+          description: Número de reservas completadas en el rango
+        promedioCalificacion:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 5
+          example: 4.3
+          description: Promedio de calificaciones de los huéspedes
+        ingresosTotales:
+          type: number
+          format: double
+          example: 4250.50
+          description: Total de ingresos generados en el rango de fechas
+    #================SQUEMAS PARA LAS RESPUESTAS DE ERRORES================
+    ErrorResponse:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          example: "2025-08-31T15:30:45Z"
+        status:
+          type: integer
+          example: 400
+        error:
+          type: string
+          example: "Bad Request"
+        message:
+          type: string
+          example: "Valide los campos de la solicitud"
+        path:
+          type: string
+          example: "/api/usuarios/registro"
+      required:
+        - status
+        - error
+        - message
+        - path
+    ErrorServer:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          example: "2025-08-31T15:30:45Z"
+        status:
+          type: integer
+          example: 500
+        error:
+          type: string
+          example: "Internal Server Error"
+        message:
+          type: string
+          example: "Ocurrió un error en el servidor"
+        path:
+          type: string
+          example: "/api/usuarios/registro"
+      required:
+        - status
+        - error
+        - message
+        - path
+    ErrorService:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          example: "2025-08-31T15:30:45Z"
+        status:
+          type: integer
+          example: 503
+        error:
+          type: string
+          example: "Error Service"
+        message:
+          type: string
+          example: "El servicio no está disponible o se encuentra en mantenimiento"
+        path:
+          type: string
+          example: "/api/usuarios/registro"
+      required:
+        - status
+        - error
+        - message
+        - path
+    ManyRequests:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          example: "2025-08-31T15:30:45Z"
+        status:
+          type: integer
+          example: 503
+        error:
+          type: string
+          example: "Many Requests"
+        message:
+          type: string
+          example: "Se han realizado muchas solicitudes al servicio"
+        path:
+          type: string
+          example: "/api/usuarios/registro"
+      required:
+        - status
+        - error
+        - message
+        - path
+
