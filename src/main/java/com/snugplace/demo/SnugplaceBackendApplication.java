@@ -9,5 +9,4 @@ public class SnugplaceBackendApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(SnugplaceBackendApplication.class, args);
 	}
-
 }
