@@ -1,6 +1,7 @@
 package Model;
 
 
+import Model.Enums.AccommodationStatus;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;

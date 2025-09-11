@@ -1,7 +1,7 @@
 package DTO;
 
 
-import Model.Role;
+import Model.Enums.Role;
 
 public record UserDTO(
         String id,
@@ -9,5 +9,6 @@ public record UserDTO(
         String email,
         String photoUrl,
         Role role
-) {
+)
+{
 }

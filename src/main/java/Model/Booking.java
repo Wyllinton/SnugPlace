@@ -1,5 +1,6 @@
 package Model;
 
+import Model.Enums.BookingStatus;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;

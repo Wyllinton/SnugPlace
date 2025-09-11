@@ -1,6 +1,6 @@
 package Controllers;
 
-import Service.UserService;
+import Service.UserServiceImpl;
 import com.snugplace.demo.dto.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,9 +10,9 @@ import jakarta.validation.Valid;
 @RequestMapping("/users")
 public class UserController {
 
-    private final UserService userService;
+    private final UserServiceImpl userService;
 
-    public UserController(UserService userService) {
+    public UserController(UserServiceImpl userService) {
         this.userService = userService;
     }
 

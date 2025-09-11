@@ -1,5 +1,7 @@
 package Model;
 
+import Model.Enums.Role;
+import Model.Enums.UserStatus;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,6 +22,4 @@ public class User {
     private String description;
     private String profilePhoto;
     private UserStatus status;
-
-
 }
