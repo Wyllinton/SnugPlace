@@ -1,17 +1,12 @@
 package DTO;
 
-
-import Model.Enums.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 
-public record UserDTO(
-        String id,
-        @NotNull String name,
+public record ResetPasswordDTO(
         @Email @NotNull @Length(max = 40) String email,
-        String photoUrl,
-        Role role
-)
-{
+        String codigo,
+        String nuevaPassword
+) {
 }

@@ -1,6 +1,13 @@
 package Mappers;
 
 
+import DTO.CreateUserDTO;
+import DTO.UserDTO;
+import Model.User;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
+
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface UserMapper {
 

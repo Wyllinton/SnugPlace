@@ -1,6 +1,6 @@
 package Service;
 
-import DTO.EditUserDTO;
+import DTO.UpdateProfileDTO;
 import Model.User;
 import Service.Interfaces.UserService;
 
@@ -13,7 +13,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateProfile(String id, EditUserDTO userDTO) {
+    public void updateProfile(String id, UpdateProfileDTO userDTO) {
 
     }
 

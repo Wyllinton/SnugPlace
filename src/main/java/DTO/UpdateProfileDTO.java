@@ -1,6 +1,6 @@
 package DTO;
 
-public record EditUserDTO (
+public record UpdateProfileDTO(
         String name,
         String phoneNumber,
         String photoURL

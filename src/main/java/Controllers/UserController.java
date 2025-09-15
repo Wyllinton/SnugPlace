@@ -1,41 +1,38 @@
 package Controllers;
 
-import Service.UserServiceImpl;
-import com.snugplace.demo.dto.*;
+import DTO.ChangeUserPassword;
+import DTO.ResponseDTO;
+import DTO.UpdateProfileDTO;
+import DTO.UserDTO;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import jakarta.validation.Valid;
 
-@RestController
+@RestController()
 @RequestMapping("/users")
 public class UserController {
 
-    private final UserServiceImpl userService;
-
-    public UserController(UserServiceImpl userService) {
-        this.userService = userService;
-    }
-
-    //Obtener perfil del usuario autenticado
     @GetMapping("/profile")
-    public ResponseEntity<UserResponse> getProfile() {
-        UserResponse profile = userService.getAuthenticatedUserProfile();
-        return ResponseEntity.ok(profile);
+    public ResponseEntity<ResponseDTO<String>> getUserProfile(@Valid @RequestBody UserDTO userDTO) throws Exception{
+        //Lógica
+
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO<>(false, "Perfil del usuario"));
     }
 
-    //Actualizar perfil del usuario
     @PatchMapping("/profile")
-    public ResponseEntity<UserResponse> updateProfile(
-            @Valid @RequestBody ActualizarPerfilRequest request) {
-        UserResponse updated = userService.updateProfile(request);
-        return ResponseEntity.ok(updated);
+    public ResponseEntity<ResponseDTO<String>> updateUserProfile(@Valid @RequestBody UpdateProfileDTO updateProfileDTO) throws Exception{
+        //Lógica
+
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO<>(false, "Perfil actualizado exitosamente"));
     }
 
-    //Cambiar contraseña
     @PatchMapping("/change-password")
-    public ResponseEntity<MessageResponse> changePassword(
-            @Valid @RequestBody CHangePasswordRequest request) {
-        userService.changePassword(request);
-        return ResponseEntity.ok(new MessageResponse("Contraseña cambiada exitosamente"));
+    public ResponseEntity<ResponseDTO<String>> changeUserPassword(@Valid @RequestBody ChangeUserPassword changeUserPassword) throws Exception{
+        //Lógica
+
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO<>(false, "Contraseña cambiada exitosamente"));
     }
+
+
 }
