@@ -1,8 +1,8 @@
 package Mappers;
 
 
-import DTO.CreateUserDTO;
-import DTO.UserDTO;
+import DTO.User.CreateUserDTO;
+import DTO.User.UserDTO;
 import Model.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

@@ -1,8 +1,8 @@
 package Controllers;
 
-import DTO.CreateUserDTO;
-import DTO.LogInUserDTO;
-import DTO.ResetPasswordDTO;
+import DTO.User.CreateUserDTO;
+import DTO.User.LogInUserDTO;
+import DTO.User.ResetPasswordDTO;
 import DTO.ResponseDTO;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;

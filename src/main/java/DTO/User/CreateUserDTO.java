@@ -1,4 +1,4 @@
-package DTO;
+package DTO.User;
 
 import Model.Enums.Role;
 import jakarta.validation.constraints.Email;

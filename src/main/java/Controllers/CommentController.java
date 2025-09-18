@@ -2,7 +2,6 @@ package Controllers;
 
 import DTO.AnswerCommentDTO;
 import DTO.CreateCommentDTO;
-import DTO.CreateUserDTO;
 import DTO.ResponseDTO;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;

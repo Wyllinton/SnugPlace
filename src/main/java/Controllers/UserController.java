@@ -1,9 +1,8 @@
 package Controllers;
 
-import DTO.ChangeUserPassword;
+import DTO.User.ChangeUserPasswordDTO;
 import DTO.ResponseDTO;
-import DTO.UpdateProfileDTO;
-import DTO.UserDTO;
+import DTO.User.UpdateProfileDTO;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,8 +12,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/users")
 public class UserController {
 
-    @GetMapping("/profile")
-    public ResponseEntity<ResponseDTO<String>> getUserProfile(@Valid @RequestBody UserDTO userDTO) throws Exception{
+    @GetMapping("/profile/{id}")
+    public ResponseEntity<ResponseDTO<String>> getUserProfile(@PathVariable String id) throws Exception{
         //Lógica
 
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO<>(false, "Perfil del usuario"));
@@ -28,11 +27,9 @@ public class UserController {
     }
 
     @PatchMapping("/change-password")
-    public ResponseEntity<ResponseDTO<String>> changeUserPassword(@Valid @RequestBody ChangeUserPassword changeUserPassword) throws Exception{
+    public ResponseEntity<ResponseDTO<String>> changeUserPassword(@Valid @RequestBody ChangeUserPasswordDTO changeUserPasswordDTO) throws Exception{
         //Lógica
 
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO<>(false, "Contraseña cambiada exitosamente"));
     }
-
-
 }

@@ -1,12 +1,9 @@
 package Controllers;
 
-import DTO.BookingDTO;
-import DTO.CreateBookingDTO;
-import DTO.GetUserBookings;
-import DTO.ResponseDTO;
-import Model.Booking;
+import DTO.*;
+import DTO.Booking.BookingDTO;
+import DTO.Booking.CreateBookingDTO;
 import jakarta.validation.Valid;
-import org.hibernate.annotations.Parameter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,15 +21,12 @@ public class BookingController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(false, "Reserva creada exitosamente"));
     }
 
-    /*
-
     @GetMapping
-    public ResponseEntity<ResponseDTO<ArrayList<BookingDTO>>> searchFilteredBooking(@Valid @RequestBody GetUserBookings getUserBookings) throws Exception{
+    public ResponseEntity<ResponseDTO<ArrayList<BookingDTO>>> searchFilteredBooking(@Valid @RequestBody FilteredBookingDTO filteredBookingDTO) throws Exception{
         //Lógica
-        ArrayList<Booking> bookings = new ArrayList<>();
-        return ResponseEntity.ok(new ResponseDTO<>(false, bookings ));
+        ArrayList<BookingDTO> bookings = new ArrayList<BookingDTO>();
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO<>(false, bookings));
     }
-    */
 
     @GetMapping("/{id}")
     public ResponseEntity<ResponseDTO<String>> bookingDetail(@PathVariable String id) throws Exception{
@@ -62,12 +56,10 @@ public class BookingController {
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO<>(false, "\t\n" + "\t\n" + "\t\n" + "\t\n" + "Reserva rechazada exitosamente"));
     }
 
-    /*
     @GetMapping("/my-bookings-host")
-    public ResponseEntity<ResponseDTO<ArrayList<BookingDTO>>> searchFilteredBookingsHost(@Valid @RequestBody GetUserBookings getUserBookings) throws Exception{
-        //Lógica
-        ArrayList<Booking> bookings = new ArrayList<>();
-        return ResponseEntity.ok(new ResponseDTO<>(false, bookings ));
+    public ResponseEntity<ResponseDTO<ArrayList<BookingDTO>>> searchFilteredBookingsHost(@Valid @RequestBody FilteredBookingsHostDTO getUserBookings) throws Exception{
+        //Logic
+        ArrayList<BookingDTO> bookings = new ArrayList<BookingDTO>();
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO<>(false, bookings));
     }
-    */
 }

@@ -25,5 +25,9 @@ public class Accommodation {
     private LocalDate publicationDate;
     private AccommodationStatus status;
     private List<String> services;
+    private List<Image> images;
+    private List<Comment> comments;
+    private List<Accommodation> accommodations;
+    private User user;
 
 }
