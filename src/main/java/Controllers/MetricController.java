@@ -1,8 +1,7 @@
 package Controllers;
 
-import DTO.AnswerCommentDTO;
-import DTO.MetricDTO;
-import DTO.MetricHostDTO;
+import DTO.Metric.MetricDTO;
+import DTO.Metric.MetricHostDTO;
 import DTO.ResponseDTO;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpStatus;

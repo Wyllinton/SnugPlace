@@ -3,6 +3,8 @@ package Controllers;
 import DTO.*;
 import DTO.Booking.BookingDTO;
 import DTO.Booking.CreateBookingDTO;
+import DTO.Booking.FilteredBookingDTO;
+import DTO.Booking.FilteredBookingsHostDTO;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

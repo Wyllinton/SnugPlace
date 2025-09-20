@@ -1,7 +1,6 @@
-package DTO;
+package DTO.Comment;
 
 import DTO.User.UserResponseDTO;
-import Model.User;
 
 import java.time.LocalDate;
 

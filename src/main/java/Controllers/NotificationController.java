@@ -1,8 +1,7 @@
 package Controllers;
 
-import DTO.AnswerCommentDTO;
-import DTO.MarkReadNotificationDTO;
-import DTO.NotificationDTO;
+import DTO.Notification.MarkReadNotificationDTO;
+import DTO.Notification.NotificationDTO;
 import DTO.ResponseDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

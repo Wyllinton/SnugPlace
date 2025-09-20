@@ -1,4 +1,4 @@
-package DTO;
+package DTO.Metric;
 
 public record MetricHostDTO() {
 }

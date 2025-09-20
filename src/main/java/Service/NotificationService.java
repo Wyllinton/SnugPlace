@@ -1,7 +1,7 @@
 package Service;
 
-import DTO.MarkReadNotificationDTO;
-import DTO.NotificationDTO;
+import DTO.Notification.MarkReadNotificationDTO;
+import DTO.Notification.NotificationDTO;
 import java.util.List;
 
 public interface NotificationService {

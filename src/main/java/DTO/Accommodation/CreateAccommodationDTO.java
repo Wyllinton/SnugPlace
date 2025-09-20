@@ -1,6 +1,6 @@
 package DTO.Accommodation;
 
-import DTO.CommentDTO;
+import DTO.Comment.CommentDTO;
 import Model.Enums.AccommodationStatus;
 import Model.Image;
 

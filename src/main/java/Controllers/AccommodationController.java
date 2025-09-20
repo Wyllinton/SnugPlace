@@ -3,6 +3,8 @@ package Controllers;
 import DTO.*;
 import DTO.Accommodation.AccommodationDTO;
 import DTO.Accommodation.CreateAccommodationDTO;
+import DTO.Accommodation.FilterAccommodationDTO;
+import DTO.Comment.CommentDTO;
 import Model.Accommodation;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;

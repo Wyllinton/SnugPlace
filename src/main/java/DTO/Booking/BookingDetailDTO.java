@@ -1,7 +1,7 @@
 package DTO.Booking;
 
 import DTO.Accommodation.AccommodationDTO;
-import DTO.CommentDTO;
+import DTO.Comment.CommentDTO;
 import DTO.User.UserResponseDTO;
 import Model.Enums.BookingStatus;
 

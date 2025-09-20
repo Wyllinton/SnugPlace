@@ -1,6 +1,7 @@
 package Service;
 
-import DTO.*;
+import DTO.Comment.AnswerCommentDTO;
+import DTO.Comment.CreateCommentDTO;
 
 public interface CommentService {
 
