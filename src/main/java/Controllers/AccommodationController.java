@@ -65,7 +65,7 @@ public class AccommodationController {
     @GetMapping("/my-accomodations")
     public ResponseEntity<ResponseDTO<ArrayList<AccommodationDTO>>> myAccommodations(@Valid @RequestBody AccommodationDTO accommodationDTO) throws Exception{
         //Lógica
-        ArrayList<> accommodations = new ArrayList<AccommodationDTO>();
+        ArrayList accommodations = new ArrayList<AccommodationDTO>();
 
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO<>(false, accommodations ));
     }
@@ -73,7 +73,7 @@ public class AccommodationController {
     @GetMapping("/{id}/comments")
     public ResponseEntity<ResponseDTO<ArrayList<CommentDTO>>> getAccommodationsComments(@PathVariable String id) throws Exception{
         //Lógica
-        ArrayList<> comments = new ArrayList<Accommodation>();
+        ArrayList comments = new ArrayList<Accommodation>();
 
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO<>(false, comments ));
     }

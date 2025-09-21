@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/auth")
-public class AuthController {
+public class AuthenticationController {
 
     @PostMapping("/register")
     public ResponseEntity<ResponseDTO<String>> registerUser(@Valid @RequestBody CreateUserDTO userDTO) throws Exception{

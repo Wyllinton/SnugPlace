@@ -1,26 +1,47 @@
 package Model;
 
 import Model.Enums.BookingStatus;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.time.LocalDate;
+import jakarta.persistence.*;
+        import lombok.*;
+        import java.time.LocalDate;
 import java.util.List;
 
 @Getter
 @Setter
 @Builder
-
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+@Table(name = "Booking")
 public class Booking {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
+
+    @Column(nullable = false)
     private LocalDate dateCheckIn;
+
+    @Column(nullable = false)
     private LocalDate dateCheckOut;
+
+    @Column(nullable = false)
     private int guestsCount;
+
+    @Enumerated(EnumType.STRING)
     private BookingStatus status;
+
+    @Column(nullable = false)
     private double price;
-    Accommodation accommodation;
-    List<Comment> comments;
-    User user;
+
+    @ManyToOne
+    @JoinColumn(name = "accommodationId", nullable = false)
+    private Accommodation accommodation;
+
+    @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments;
+
+    @ManyToOne
+    @JoinColumn(name = "userId", nullable = false)
+    private User user;
 }
