@@ -1,4 +1,4 @@
-package DTO;
+package DTO.Notification;
 
 import Model.Enums.TypeNotification;
 import jakarta.validation.constraints.NotBlank;

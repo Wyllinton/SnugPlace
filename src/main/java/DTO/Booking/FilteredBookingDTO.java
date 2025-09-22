@@ -1,4 +1,4 @@
-package DTO;
+package DTO.Booking;
 
 public record FilteredBookingDTO() {
 }

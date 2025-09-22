@@ -4,7 +4,7 @@ import DTO.User.CreateUserDTO;
 import DTO.User.LogInUserDTO;
 import DTO.User.ResetPasswordDTO;
 
-public interface AuthService {
+public interface AuthenticationService {
 
     void registerUser(CreateUserDTO userDTO) throws Exception;
 

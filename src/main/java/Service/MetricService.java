@@ -1,7 +1,9 @@
 package Service;
 
 import DTO.MetricAccommodationDTO;
-import DTO.MetricHostDTO;
+import DTO.Metric.MetricHostDTO;
+import DTO.Metric.MetricDTO;
+
 
 import java.util.Date;
 

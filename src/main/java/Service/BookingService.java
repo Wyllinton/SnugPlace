@@ -1,9 +1,7 @@
 package Service;
 
-import DTO.*;
-import DTO.Booking.BookingDTO;
-import DTO.Booking.BookingDetailDTO;
-import DTO.Booking.CreateBookingDTO;
+import DTO.Booking.*;
+
 import java.util.List;
 
 public interface BookingService {

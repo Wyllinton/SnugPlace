@@ -1,15 +1,16 @@
 package Controllers;
 
-import DTO.MetricAccommodationDTO;
-import DTO.MetricHostDTO;
+import DTO.Metric.MetricDTO;
+import DTO.Metric.MetricHostDTO;
 import DTO.ResponseDTO;
 import jakarta.validation.constraints.NotNull;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 @RestController
@@ -17,18 +18,9 @@ import java.util.Date;
 public class MetricController {
 
     @GetMapping("/accommodations/{id}")
-    public ResponseEntity<ResponseDTO<MetricAccommodationDTO>> getAccomodationMetric(@PathVariable Long id, @RequestParam @NotNull @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date firstDate,  @RequestParam @NotNull @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date lastDate) throws Exception{
-        //DEv the logic to get the metric for one accommodation by id
-        MetricAccommodationDTO metric = new MetricAccommodationDTO(id,
-                "Apartment in Bogotá",
-                firstDate,
-                lastDate,
-                20,
-                15,
-                3,
-                2,
-                4.5,
-                3200.75);
+    public ResponseEntity<ResponseDTO<MetricDTO>> getAccomodationMetric(@PathVariable String id, @NotNull Date firstDate, @NotNull Date lastDate) throws Exception{
+        //Lógica
+        MetricDTO metric = new MetricDTO();
 
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO<>(false, metric));
     }

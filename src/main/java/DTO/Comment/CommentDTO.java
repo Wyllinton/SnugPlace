@@ -8,9 +8,11 @@ import jakarta.validation.constraints.Past;
 import java.time.LocalDate;
 
 public record CommentDTO(
-    Long idBooking,
-    @NotNull double rating,
-    @NotBlank String comment,
-    @Past LocalDate date
+        Long id,
+        Long idBooking,
+        @NotNull double rating,
+        UserResponseDTO user,
+        @NotBlank String comment,
+        @Past LocalDate date
 ) {
 }
