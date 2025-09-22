@@ -4,6 +4,7 @@ import DTO.User.ChangeUserPasswordDTO;
 import DTO.User.CreateUserDTO;
 import DTO.User.UpdateProfileDTO;
 import DTO.User.UserDTO;
+import Mappers.UserMapper;
 import Model.Enums.UserStatus;
 import Model.User;
 import Service.UserService;
@@ -22,6 +23,7 @@ public class UserServiceImpl implements UserService {
 
     //Simulation of the DB
     private final Map<String, User> userStore = new ConcurrentHashMap<>();
+    private final UserMapper userMapper;
 
     //We encrypt the password before saving it.
     private String encode(String password){
@@ -36,22 +38,10 @@ public class UserServiceImpl implements UserService {
             throw new Exception("El correo electrónico ya está en uso.");
         }
 
-        // User creation from the DTO
-        User newUser = User.builder()
-                .id(UUID.randomUUID().toString())
-                .name(userDTO.name())
-                .email(userDTO.email())
-                .phoneNumber(userDTO.phoneNumber())
-                .Role(userDTO.role().GUEST)
-                .birthDate(userDTO.birhtDate())
-                .profilePhoto(userDTO.profilePhoto())
-                .password(encode(userDTO.password()))
-                .createdAt(LocalDateTime.now())
-                .status(UserStatus.ACTIVE)
-                .build();
+        User newUser = userMapper.toEntity(userDTO);
+        newUser.setPassword(encode(userDTO.password()));
 
-        // Save the user
-        userStore.put(newUser.getId(), newUser);
+        userStore.put(newUser.getEmail(), newUser);
     }
 
     private boolean isEmailDuplicated(String email){
@@ -65,16 +55,10 @@ public class UserServiceImpl implements UserService {
         User user = userStore.get(id);
 
         if(user == null){
-            throw new Exception("El usuario no existe");
+            throw new Exception("El usuario no ha sido encontrado");
         }
 
-        return new UserDTO(
-                user.getId(),
-                user.getName(),
-                user.getEmail(),
-                user.getProfilePhoto(),
-                user.getRole()
-        );
+        return userMapper.toUserDTO(user);
     }
 
     @Override

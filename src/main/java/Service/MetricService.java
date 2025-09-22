@@ -9,7 +9,7 @@ import java.util.Date;
 
 public interface MetricService {
 
-    MetricAccommodationDTO getAccomodationMetric(String id, Date firstDate, Date lastDate) throws Exception;
+    MetricAccommodationDTO getAccommodationMetric(String id, Date firstDate, Date lastDate) throws Exception;
 
     MetricHostDTO getHostMetric(Date firstDate, Date lastDate) throws Exception;
 }
