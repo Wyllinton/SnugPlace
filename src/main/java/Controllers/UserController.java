@@ -5,6 +5,7 @@ import DTO.ResponseDTO;
 import DTO.User.CreateUserDTO;
 import DTO.User.UpdateProfileDTO;
 import DTO.User.UserDTO;
+import Exceptions.ValueConflictException;
 import Service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -50,4 +51,10 @@ public class UserController {
         userService.changeUserPassword(changeUserPasswordDTO);
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO<>(false, "Contraseña cambiada exitosamente"));
     }
+
+    @ExceptionHandler(ValueConflictException.class)
+    public ResponseEntity<ResponseDTO<String>> handleValueConflictException(ValueConflictException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body( new ResponseDTO<>(true, ex.getMessage()) );
+    }
+
 }

@@ -6,8 +6,10 @@ import DTO.Accommodation.CreateAccommodationDTO;
 import DTO.Accommodation.FilterAccommodationDTO;
 import DTO.Comment.CommentDTO;
 import Model.Accommodation;
+import Service.AccommodationService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,12 +19,14 @@ import java.util.Date;
 
 @RestController()
 @RequestMapping("/accommodations")
+@RequiredArgsConstructor
 public class AccommodationController {
+
+    private final AccommodationService accommodationService;
 
     @PostMapping
     public ResponseEntity<ResponseDTO<String>> createAccommodation(@Valid @RequestBody CreateAccommodationDTO createAccommodationDTO) throws Exception{
-        //Lógica
-
+        accommodationService.createAccommodation(createAccommodationDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(false, "\t\n" + "Alojamiento creado exitosamente"));
     }
 
@@ -50,8 +54,7 @@ public class AccommodationController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ResponseDTO<String>> deleteAccommodation(@PathVariable String id) throws Exception{
-        //Lógica
-
+        accommodationService.deleteAccommodation(id);
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO<>(false, "\t\n" + "\t\n" + "\t\n" + "Alojamiento eliminado exitosamente"));
     }
 

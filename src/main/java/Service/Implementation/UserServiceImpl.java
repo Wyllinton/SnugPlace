@@ -4,6 +4,7 @@ import DTO.User.ChangeUserPasswordDTO;
 import DTO.User.CreateUserDTO;
 import DTO.User.UpdateProfileDTO;
 import DTO.User.UserDTO;
+import Exceptions.ValueConflictException;
 import Mappers.UserMapper;
 import Model.Enums.UserStatus;
 import Model.User;
@@ -35,7 +36,7 @@ public class UserServiceImpl implements UserService {
     public void createUser(CreateUserDTO userDTO) throws Exception {
         //Validation in case the email is used already
         if(isEmailDuplicated(userDTO.email())){
-            throw new Exception("El correo electrónico ya está en uso.");
+            throw new ValueConflictException("Email is already in use");
         }
 
         User newUser = userMapper.toEntity(userDTO);
