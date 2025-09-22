@@ -1,6 +1,5 @@
 package Controllers;
 
-import DTO.AnswerCommentDTO;
 import DTO.MarkReadNotificationDTO;
 import DTO.NotificationDTO;
 import DTO.ResponseDTO;

@@ -3,6 +3,7 @@ package Controllers;
 import DTO.*;
 import DTO.Accommodation.AccommodationDTO;
 import DTO.Accommodation.CreateAccommodationDTO;
+import DTO.Comment.CommentDTO;
 import Model.Accommodation;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -63,7 +64,7 @@ public class AccommodationController {
     @GetMapping("/my-accomodations")
     public ResponseEntity<ResponseDTO<ArrayList<AccommodationDTO>>> myAccommodations(@Valid @RequestBody AccommodationDTO accommodationDTO) throws Exception{
         //Lógica
-        ArrayList<> accommodations = new ArrayList<AccommodationDTO>();
+        ArrayList<AccommodationDTO> accommodations = new ArrayList<AccommodationDTO>();
 
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO<>(false, accommodations ));
     }
@@ -71,7 +72,7 @@ public class AccommodationController {
     @GetMapping("/{id}/comments")
     public ResponseEntity<ResponseDTO<ArrayList<CommentDTO>>> getAccommodationsComments(@PathVariable String id) throws Exception{
         //Lógica
-        ArrayList<> comments = new ArrayList<Accommodation>();
+        ArrayList<CommentDTO> comments = new ArrayList<CommentDTO>();
 
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO<>(false, comments ));
     }

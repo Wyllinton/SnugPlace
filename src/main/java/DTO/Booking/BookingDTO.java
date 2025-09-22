@@ -5,7 +5,7 @@ import Model.Enums.BookingStatus;
 import java.time.LocalDate;
 
 public record BookingDTO(
-        String id,
+        Long id,
         String idAccommodation,
         String titleAccommodation,
         LocalDate dateCheckIn,
