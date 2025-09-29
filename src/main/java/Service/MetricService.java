@@ -1,13 +1,15 @@
 package Service;
 
-import DTO.Metric.MetricDTO;
+import DTO.MetricAccommodationDTO;
 import DTO.Metric.MetricHostDTO;
+import DTO.Metric.MetricDTO;
+
 
 import java.util.Date;
 
 public interface MetricService {
 
-    MetricDTO getAccomodationMetric(String id, Date firstDate, Date lastDate) throws Exception;
+    MetricAccommodationDTO getAccommodationMetric(String id, Date firstDate, Date lastDate) throws Exception;
 
     MetricHostDTO getHostMetric(Date firstDate, Date lastDate) throws Exception;
 }

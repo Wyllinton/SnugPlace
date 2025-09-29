@@ -3,6 +3,7 @@ package Controllers;
 import DTO.Comment.AnswerCommentDTO;
 import DTO.Comment.CreateCommentDTO;
 import DTO.ResponseDTO;
+import DTO.User.UserResponseDTO;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,8 +23,8 @@ public class CommentController {
     @PostMapping("/{id}/answer")
     public ResponseEntity<ResponseDTO<AnswerCommentDTO>> answerCommentHost(@PathVariable String id) throws Exception{
         //Lógica
-        AnswerCommentDTO answer = new AnswerCommentDTO();
+        //AnswerCommentDTO answer = new AnswerCommentDTO();
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(false, answer));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(false, null));
     }
 }

@@ -45,6 +45,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO getUserProfile(String id) throws Exception {
+        return null;
 
     }
 

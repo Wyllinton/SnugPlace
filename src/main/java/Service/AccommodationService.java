@@ -1,9 +1,12 @@
 package Service;
 
+import DTO.*;
 import DTO.Accommodation.AccommodationDTO;
 import DTO.Accommodation.CreateAccommodationDTO;
 import DTO.Accommodation.FilterAccommodationDTO;
 import DTO.Comment.CommentDTO;
+import DTO.Comment.CommentDTO;
+
 
 import java.util.Date;
 import java.util.List;
