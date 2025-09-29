@@ -16,9 +16,8 @@ import java.util.List;
 public class Accommodation {
 
     @Id
-    //@GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @Column(nullable = false, length = 150)
     private String title;
 
@@ -53,7 +52,7 @@ public class Accommodation {
     private List<Image> images;
 
     @OneToMany(mappedBy = "accommodation", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Booking> bookings;
+    private List<Comment> comments;
 
     @ManyToOne
     @JoinColumn(name = "userId", nullable = false)
