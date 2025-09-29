@@ -1,12 +1,14 @@
 package DTO.User;
 
 
+import jakarta.validation.constraints.NotBlank;
+
 public record UpdateProfileDTO(
-        String id,
-        String name,
-        String phoneNumber,
+        @NotBlank String id,
+        @NotBlank String name,
+        @NotBlank String phoneNumber,
         String photoURL,
-        String description
+        @NotBlank String description
 )
 {
 }

@@ -1,4 +1,6 @@
 package DTO.Metric;
 
-public record MetricDTO() {
+public record MetricDTO(
+
+) {
 }

@@ -1,9 +1,11 @@
 package DTO;
 
+import jakarta.validation.constraints.NotNull;
+
 public record ImageDTO(
-        Long id,
-        Long idAccommodation,
-        String url,
+        @NotNull Long id,
+        @NotNull Long idAccommodation,
+        @NotNull String url,
         boolean isMain
 ) {
 }

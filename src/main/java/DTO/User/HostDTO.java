@@ -1,8 +1,10 @@
 package DTO.User;
 
+import jakarta.validation.constraints.NotNull;
+
 public record HostDTO(
-        Long id,
-        String name,
-        String email
+        @NotNull Long id,
+        @NotNull String name,
+        @NotNull String email
 ) {
 }
