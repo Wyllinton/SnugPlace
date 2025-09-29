@@ -1,4 +1,6 @@
 package DTO.Notification;
 
-public record MarkReadNotificationDTO() {
+public record MarkReadNotificationDTO(
+        String id
+) {
 }

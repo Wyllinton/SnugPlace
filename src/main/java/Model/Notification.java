@@ -15,8 +15,8 @@ import java.time.LocalDateTime;
 public class Notification {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(nullable = false, length = 100)
     private String title;
@@ -29,6 +29,9 @@ public class Notification {
 
     @Column(nullable = false)
     private LocalDateTime date;
+
+    @Column(nullable = false)
+    private boolean read;
 
     @ManyToOne
     @JoinColumn(name = "receiverId", nullable = false)

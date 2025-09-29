@@ -14,8 +14,8 @@ import java.time.LocalDate;
 public class Image {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(nullable = false, length = 300)
     private String url;

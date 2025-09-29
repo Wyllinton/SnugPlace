@@ -1,4 +1,12 @@
 package DTO.Notification;
 
-public record NotificationDTO() {
+import java.time.LocalDate;
+
+public record NotificationDTO(
+        String id,
+        String title,
+        String message,
+        LocalDate date,
+        Boolean read
+) {
 }
