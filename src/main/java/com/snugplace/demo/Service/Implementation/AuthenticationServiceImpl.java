@@ -4,13 +4,12 @@ import com.snugplace.demo.DTO.User.CreateUserDTO;
 import com.snugplace.demo.DTO.User.LogInUserDTO;
 import com.snugplace.demo.DTO.User.ResetPasswordDTO;
 import com.snugplace.demo.Service.AuthenticationService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
+@Service
+@RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
-
-    @Override
-    public void registerUser(CreateUserDTO userDTO) throws Exception {
-
-    }
 
     @Override
     public void loginUser(LogInUserDTO logInUserDTO) throws Exception {

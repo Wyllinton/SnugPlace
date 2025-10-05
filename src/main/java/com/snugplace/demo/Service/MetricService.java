@@ -1,6 +1,6 @@
 package com.snugplace.demo.Service;
 
-import com.snugplace.demo.DTO.MetricAccommodationDTO;
+import com.snugplace.demo.DTO.Metric.MetricAccommodationDTO;
 import com.snugplace.demo.DTO.Metric.MetricHostDTO;
 
 
@@ -10,5 +10,5 @@ public interface MetricService {
 
     MetricAccommodationDTO getAccommodationMetric(Long id, Date firstDate, Date lastDate) throws Exception;
 
-    MetricHostDTO getHostMetric(Date firstDate, Date lastDate) throws Exception;
+    MetricHostDTO getHostMetric(Long id, Date firstDate, Date lastDate) throws Exception;
 }

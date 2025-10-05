@@ -17,7 +17,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @RequiredArgsConstructor
-
 public class AccommodationServiceImpl implements AccommodationService {
 
     private final AccommodationMapper accommodationMapper;
@@ -51,7 +50,7 @@ public class AccommodationServiceImpl implements AccommodationService {
     }
 
     @Override
-    public void verifyAvailabilityAccommodation(Long id, Date checkIn, Date checkOut) throws Exception {
+    public boolean verifyAvailabilityAccommodation(Long id, Date checkIn, Date checkOut) throws Exception {
 
     }
 

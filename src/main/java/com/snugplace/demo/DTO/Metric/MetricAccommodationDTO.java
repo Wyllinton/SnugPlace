@@ -1,9 +1,8 @@
-package com.snugplace.demo.DTO;
+package com.snugplace.demo.DTO.Metric;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 
-import java.time.LocalDate;
 import java.util.Date;
 
 public record MetricAccommodationDTO(

@@ -8,7 +8,7 @@ public interface NotificationService {
 
     List<NotificationDTO> getNotifications() throws Exception;
 
-    int getNumberNotifications() throws Exception;
+    int getNumberUnreadNotifications(Long id) throws Exception;
 
     void markAsRead(MarkReadNotificationDTO markReadNotificationDTO) throws Exception;
 }

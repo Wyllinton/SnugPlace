@@ -5,6 +5,7 @@ import com.snugplace.demo.DTO.Accommodation.CreateAccommodationDTO;
 import com.snugplace.demo.DTO.Accommodation.FilterAccommodationDTO;
 import com.snugplace.demo.DTO.Comment.CommentDTO;
 import com.snugplace.demo.DTO.ResponseDTO;
+import com.snugplace.demo.DTO.ResponseListDTO;
 import com.snugplace.demo.Model.Accommodation;
 import com.snugplace.demo.Service.AccommodationService;
 import jakarta.validation.Valid;
@@ -13,9 +14,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @RestController()
 @RequestMapping("/accommodations")
@@ -31,54 +32,44 @@ public class AccommodationController {
     }
 
     @GetMapping
-    public ResponseEntity<ResponseDTO<ArrayList<AccommodationDTO>>> searchFilteredAccommodation(@Valid @RequestBody FilterAccommodationDTO filterAccommodationDTO) throws Exception{
-        //Lógica
-        ArrayList accommodations = new ArrayList<Accommodation>();
-
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO<>(false, accommodations ));
+    public ResponseEntity<ResponseListDTO<List<AccommodationDTO>>> searchFilteredAccommodation(@Valid @RequestBody FilterAccommodationDTO filterAccommodationDTO) throws Exception{
+        List<AccommodationDTO> accommodations = accommodationService.searchFilteredAccommodation(filterAccommodationDTO);
+        return ResponseEntity.ok(new ResponseListDTO<>(false, "Consulta exitosa de lista de alojamientos", accommodations));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ResponseDTO<AccommodationDTO>> accommodationsDetails(@PathVariable Long id) throws Exception{
-        //Lógica
-
-        return null;
-        //return ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO<>(false, "\t\n" + "Detalle del alojamiento"));
+        AccommodationDTO accommodationDetails = accommodationService.accommodationsDetails(id);
+        return ResponseEntity.ok(new ResponseDTO<>(false, accommodationDetails));
     }
 
     @PatchMapping("/{id}")
     public ResponseEntity<ResponseDTO<String>> updateAccommodation(@PathVariable Long id) throws Exception{
-        //Lógica
-
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO<>(false, "\t\n" + "\t\n" + "Alojamiento actualizado exitosamente"));
+        accommodationService.updateAccommodation(id);
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO<>(false,"Alojamiento actualizado exitosamente"));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ResponseDTO<String>> deleteAccommodation(@PathVariable Long id) throws Exception{
         accommodationService.deleteAccommodation(id);
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO<>(false, "\t\n" + "\t\n" + "\t\n" + "Alojamiento eliminado exitosamente"));
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO<>(false,"Alojamiento eliminado exitosamente"));
     }
 
     @GetMapping("/{id}/availability")
     public ResponseEntity<ResponseDTO<String>> verifyAvailabilityAccommodation(@PathVariable Long id, @NotNull Date checkIn, @NotNull Date checkOut) throws Exception{
-        //Lógica
-
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO<>(false, "\t\n" + "\t\n" + "\t\n" + "\t\n" + "Estado de disponibilidad"));
+        accommodationService.verifyAvailabilityAccommodation(id, checkIn, checkOut);
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO<>(false,"Se buscó estado de disponibilidad"));
     }
 
     @GetMapping("/my-accomodations")
-    public ResponseEntity<ResponseDTO<ArrayList<AccommodationDTO>>> myAccommodations(@NotNull Integer page) throws Exception{
-        //Lógica
-        ArrayList<AccommodationDTO> accommodations = new ArrayList<AccommodationDTO>();
-
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO<>(false, accommodations ));
+    public ResponseEntity<ResponseListDTO<List<AccommodationDTO>>> myAccommodations(@NotNull Integer page) throws Exception{
+        List<AccommodationDTO> accommodations = accommodationService.myAccommodations(page);
+        return ResponseEntity.ok(new ResponseListDTO<>(false, "Consulta exitosa de lista de alojamientos", accommodations));
     }
 
     @GetMapping("/{id}/comments")
-    public ResponseEntity<ResponseDTO<ArrayList<CommentDTO>>> getAccommodationsComments(@PathVariable Long id) throws Exception{
-        //Lógica
-        ArrayList<CommentDTO> comments = new ArrayList<CommentDTO>();
-
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO<>(false, comments ));
+    public ResponseEntity<ResponseListDTO<List<CommentDTO>>> getAccommodationsComments(@PathVariable Long id) throws Exception{
+        List<CommentDTO> comments = accommodationService.getAccommodationsComments(id);
+        return ResponseEntity.ok(new ResponseListDTO<>(false, "Consulta exitosa de lista de comentarios", comments));
     }
 }

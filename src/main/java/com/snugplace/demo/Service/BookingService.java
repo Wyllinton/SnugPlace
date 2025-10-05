@@ -14,9 +14,7 @@ public interface BookingService {
 
     void cancelBooking(Long id, String reason) throws Exception;
 
-    void confirmBookingHost(Long id) throws Exception;
+    List<BookingDTO> searchFilteredBookingsHost(Long id) throws Exception;
 
-    void rejectBookingHost(Long id, String reason) throws Exception;
-
-    BookingDTO searchFilteredBookingsHost(FilteredBookingsHostDTO getUserBookings) throws Exception;
+    List<BookingDTO> searchFilteredBookingsUser (Long id) throws Exception;
 }

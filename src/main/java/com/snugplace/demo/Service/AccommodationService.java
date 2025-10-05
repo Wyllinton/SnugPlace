@@ -21,7 +21,7 @@ public interface AccommodationService {
 
     void deleteAccommodation(Long id) throws Exception;
 
-    void verifyAvailabilityAccommodation(Long id, Date checkIn, Date checkOut) throws Exception;
+    boolean verifyAvailabilityAccommodation(Long id, Date checkIn, Date checkOut) throws Exception;
 
     List<AccommodationDTO> myAccommodations(Integer page) throws Exception;
 

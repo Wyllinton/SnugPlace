@@ -6,8 +6,6 @@ import com.snugplace.demo.DTO.User.ResetPasswordDTO;
 
 public interface AuthenticationService {
 
-    void registerUser(CreateUserDTO userDTO) throws Exception;
-
     void loginUser(LogInUserDTO logInUserDTO) throws Exception;
 
     void recoverPassword(String email) throws Exception;

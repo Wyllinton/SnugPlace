@@ -1,6 +1,7 @@
 package com.snugplace.demo.Service.Implementation;
 
 import com.snugplace.demo.DTO.User.ChangeUserPasswordDTO;
+import com.snugplace.demo.DTO.User.CreateUserDTO;
 import com.snugplace.demo.DTO.User.UpdateProfileDTO;
 import com.snugplace.demo.DTO.User.UserDTO;
 import com.snugplace.demo.Mappers.UserMapper;
@@ -42,7 +43,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateUserProfile(UpdateProfileDTO updateProfileDTO) throws Exception {
+    public void registerUser(CreateUserDTO createUserDTO) throws Exception{
+
+    }
+
+    @Override
+    public void updateUserProfile(Long id, UpdateProfileDTO updateProfileDTO) throws Exception {
 
     }
 
@@ -52,7 +58,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void changeUserPassword(ChangeUserPasswordDTO changeUserPasswordDTO) throws Exception {
+    public void changeUserPassword(Long id, ChangeUserPasswordDTO changeUserPasswordDTO) throws Exception {
 
 
     }
