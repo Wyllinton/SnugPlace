@@ -3,9 +3,10 @@ package com.snugplace.demo;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
-@EntityScan("Model")
+@EntityScan("com.snugplace.demo.Model")
 public class SnugplaceBackendApplication {
 
 	public static void main(String[] args) {
