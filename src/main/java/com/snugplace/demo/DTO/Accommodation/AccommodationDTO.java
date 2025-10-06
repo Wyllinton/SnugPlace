@@ -3,6 +3,7 @@ package com.snugplace.demo.DTO.Accommodation;
 import com.snugplace.demo.DTO.Comment.CommentDTO;
 import com.snugplace.demo.DTO.User.HostDTO;
 import com.snugplace.demo.Model.Enums.AccommodationStatus;
+import com.snugplace.demo.Model.Enums.Service;
 import com.snugplace.demo.Model.Image;
 import jakarta.validation.constraints.*;
 import java.time.LocalDate;
@@ -18,7 +19,7 @@ public record AccommodationDTO(
         @Min(1) int guestsCount,
         @DecimalMin("0.0") @DecimalMax("5.0") double averageRating,
         @NotNull @PastOrPresent LocalDate publicationDate,
-        @NotNull @Size(min = 1) List<String> services,
+        @NotNull @Size(min = 1) List<Service> services,
         @NotNull AccommodationStatus status,
         @NotNull Image mainImage,
         @NotNull HostDTO host,

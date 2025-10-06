@@ -7,7 +7,7 @@ import com.snugplace.demo.DTO.User.UserDTO;
 
 public interface UserService {
 
-    UserDTO getUserProfile(Long id) throws Exception;
+    UserDTO getUserProfile(Long id);
 
     void registerUser(CreateUserDTO userDTO) throws Exception;
 

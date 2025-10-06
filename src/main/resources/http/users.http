@@ -1,0 +1,48 @@
+### Users HTTP tests for UserServiceImpl via UserController
+
+@baseUrl = http://localhost:8080
+@userId = 1
+
+### Register a new user
+POST http://localhost:8080/users/register
+Content-Type: application/json
+
+{
+  "name": "Juan Pablo López",
+  "email": "pablo@gmail.com",
+  "password": "1234jaja",
+  "phoneNumber": "304835726",
+  "birhtDate": "2005-07-30",
+  "createdAt": "2025-10-05T17:50:00",
+  "role": "USER",
+  "status": "ACTIVE",
+  "description": "Hola soy pablopez",
+  "profilePhoto": ""
+}
+
+### Get user profile
+GET {{baseUrl}}/users/{{userId}}/profile
+
+### Update user profile
+PATCH {{baseUrl}}/users/{{userId}}/profile
+Content-Type: application/json
+
+{
+  "id": {{userId}},
+  "name": "Juan P. López",
+  "phoneNumber": "3000000000",
+  "photoURL": "https://example.com/photo.jpg",
+  "description": "Descripción actualizada"
+}
+
+### Change user password
+PATCH {{baseUrl}}/users/{{userId}}/profile/change-password
+Content-Type: application/json
+
+{
+  "currentPassword": "1234jaja",
+  "newPassword": "nuevaPass987"
+}
+
+### Delete user profile
+DELETE {{baseUrl}}/users/{{userId}}/profile

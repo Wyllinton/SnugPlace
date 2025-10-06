@@ -1,5 +1,6 @@
 package com.snugplace.demo.DTO.Accommodation;
 
+import com.snugplace.demo.Model.Enums.Service;
 import jakarta.validation.constraints.*;
 
 import java.time.LocalDate;
@@ -13,7 +14,7 @@ public record FilterAccommodationDTO(
         @NotNull @NotBlank @Positive Double minPrice,
         @PositiveOrZero Double maxPrice,
         @Min(1) Integer guestsCount,
-        List<String> services,
+        List<Service> services,
         @PositiveOrZero Integer page
 ) {
 }

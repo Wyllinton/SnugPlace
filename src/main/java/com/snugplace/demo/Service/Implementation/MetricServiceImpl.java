@@ -12,6 +12,7 @@ import java.util.Date;
 @RequiredArgsConstructor
 
 public class MetricServiceImpl implements MetricService {
+
     @Override
     public MetricAccommodationDTO getAccommodationMetric(Long id, Date firstDate, Date lastDate) throws Exception {
         //MetricAccommodationDTO metricAccommodation = new MetricAccommodationDTO();

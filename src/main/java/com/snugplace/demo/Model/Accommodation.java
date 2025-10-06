@@ -1,6 +1,7 @@
 package com.snugplace.demo.Model;
 
 import com.snugplace.demo.Model.Enums.AccommodationStatus;
+import com.snugplace.demo.Model.Enums.Service;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
@@ -46,7 +47,8 @@ public class Accommodation {
     private AccommodationStatus status;
 
     @ElementCollection
-    private List<String> services;
+    @Enumerated(EnumType.STRING)
+    private List<Service> services;
 
     @OneToMany(mappedBy = "accommodationId", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Image> images;

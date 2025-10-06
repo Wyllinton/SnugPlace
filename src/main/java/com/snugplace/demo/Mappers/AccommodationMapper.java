@@ -10,6 +10,7 @@ public interface AccommodationMapper {
 
     @Mapping(source = "user", target = "host")
     @Mapping(source = "comments", target = "comments")
+    @Mapping(source = "guetsCount", target = "guestsCount")
     @Mapping(target = "mainImage", expression = "java(accommodation.getImages() != null && !accommodation.getImages().isEmpty() ? accommodation.getImages().get(0) : null)")
     @Mapping(target = "averageRating", expression = "java(calculateAverageRating(accommodation))")
     AccommodationDTO toAccommodationDTO(Accommodation accommodation);
@@ -20,6 +21,7 @@ public interface AccommodationMapper {
     @Mapping(source = "host.id", target = "user.id")
     @Mapping(source = "images", target = "images")
     @Mapping(source = "comments", target = "comments")
+    @Mapping(source = "guestsCount", target = "guetsCount")
     Accommodation toEntity(CreateAccommodationDTO dto);
 
     default double calculateAverageRating(Accommodation accommodation) {
