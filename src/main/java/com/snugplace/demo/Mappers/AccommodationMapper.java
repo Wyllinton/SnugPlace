@@ -10,8 +10,8 @@ public interface AccommodationMapper {
 
     @Mapping(source = "user", target = "host")
     @Mapping(source = "comments", target = "comments")
-    @Mapping(source = "guetsCount", target = "guestsCount")
-    @Mapping(target = "mainImage", expression = "java(accommodation.getImages() != null && !accommodation.getImages().isEmpty() ? accommodation.getImages().get(0) : null)")
+    @Mapping(source = "guestsCount", target = "guestsCount")
+    @Mapping(target = "mainImage", expression = "java(accommodation.getImages() != null && !accommodation.getImages().isEmpty() ? accommodation.getImages().stream().filter(img -> img.isMainImage()).findFirst().orElse(accommodation.getImages().iterator().next()) : null)")
     @Mapping(target = "averageRating", expression = "java(calculateAverageRating(accommodation))")
     AccommodationDTO toAccommodationDTO(Accommodation accommodation);
 
@@ -21,8 +21,10 @@ public interface AccommodationMapper {
     @Mapping(source = "host.id", target = "user.id")
     @Mapping(source = "images", target = "images")
     @Mapping(source = "comments", target = "comments")
-    @Mapping(source = "guestsCount", target = "guetsCount")
+    @Mapping(source = "guestsCount", target = "guestsCount")
     Accommodation toEntity(CreateAccommodationDTO dto);
+
+    Accommodation toEntity(UpdateAccommodationDTO dto);
 
     default double calculateAverageRating(Accommodation accommodation) {
         if (accommodation.getComments() == null || accommodation.getComments().isEmpty()) {

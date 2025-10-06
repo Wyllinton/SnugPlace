@@ -5,6 +5,7 @@ import jakarta.validation.constraints.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 public record FilterAccommodationDTO(
         @NotNull @NotBlank String city,
@@ -14,7 +15,7 @@ public record FilterAccommodationDTO(
         @NotNull @NotBlank @Positive Double minPrice,
         @PositiveOrZero Double maxPrice,
         @Min(1) Integer guestsCount,
-        List<Service> services,
+        Set<Service> services,
         @PositiveOrZero Integer page
 ) {
 }

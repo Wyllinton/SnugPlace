@@ -3,6 +3,7 @@ package com.snugplace.demo.Controllers;
 import com.snugplace.demo.DTO.Accommodation.AccommodationDTO;
 import com.snugplace.demo.DTO.Accommodation.CreateAccommodationDTO;
 import com.snugplace.demo.DTO.Accommodation.FilterAccommodationDTO;
+import com.snugplace.demo.DTO.Accommodation.UpdateAccommodationDTO;
 import com.snugplace.demo.DTO.Comment.CommentDTO;
 import com.snugplace.demo.DTO.ResponseDTO;
 import com.snugplace.demo.DTO.ResponseListDTO;
@@ -44,8 +45,8 @@ public class AccommodationController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<ResponseDTO<String>> updateAccommodation(@PathVariable Long id) throws Exception{
-        accommodationService.updateAccommodation(id);
+    public ResponseEntity<ResponseDTO<String>> updateAccommodation(@PathVariable Long id, @Valid @RequestBody UpdateAccommodationDTO updateAccommodationDTO) throws Exception{
+        accommodationService.updateAccommodation(id, updateAccommodationDTO);
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO<>(false,"Alojamiento actualizado exitosamente"));
     }
 

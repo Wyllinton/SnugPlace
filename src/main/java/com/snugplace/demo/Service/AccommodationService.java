@@ -3,6 +3,7 @@ package com.snugplace.demo.Service;
 import com.snugplace.demo.DTO.Accommodation.AccommodationDTO;
 import com.snugplace.demo.DTO.Accommodation.CreateAccommodationDTO;
 import com.snugplace.demo.DTO.Accommodation.FilterAccommodationDTO;
+import com.snugplace.demo.DTO.Accommodation.UpdateAccommodationDTO;
 import com.snugplace.demo.DTO.Comment.CommentDTO;
 
 
@@ -17,7 +18,7 @@ public interface AccommodationService {
 
     AccommodationDTO accommodationsDetails(Long id) throws Exception;
 
-    void updateAccommodation(Long id) throws Exception;
+    void updateAccommodation(Long id, UpdateAccommodationDTO updateAccommodationDTO) throws Exception;
 
     void deleteAccommodation(Long id) throws Exception;
 

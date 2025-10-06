@@ -9,6 +9,7 @@ import com.snugplace.demo.Model.Image;
 import jakarta.validation.constraints.*;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 public record CreateAccommodationDTO(
         @NotNull HostDTO host,
@@ -24,8 +25,8 @@ public record CreateAccommodationDTO(
         @NotNull @PastOrPresent LocalDate publicationDate,
         @NotNull AccommodationStatus status,
         @NotNull @Size(min = 1) List<Service> services,
-        @NotNull List<Image> images,
-        List<CommentDTO> comments
+        @NotNull Set<Image> images,
+        Set<CommentDTO> comments
 ) {
 
 }

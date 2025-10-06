@@ -57,6 +57,20 @@ GET {{baseUrl}}/accommodations/{{accommodationId}}/comments
 
 ### Update an accommodation (placeholder endpoint)
 PATCH {{baseUrl}}/accommodations/{{accommodationId}}
+Content-Type: application/json
+
+{
+  "title": "PH en el poblado",
+  "description": "Para la fiesta del sabado",
+  "priceDay": 570000,
+  "guestsCount": 10,
+  "services": ["WIFI", "POOL"],
+  "images": [
+    {"url": "http://imagen1.com"},
+    {"url": "http://imagen2.com"},
+    {"url": "http://imagen3.com"}
+  ]
+}
 
 ### Delete an accommodation
 DELETE {{baseUrl}}/accommodations/{{accommodationId}}

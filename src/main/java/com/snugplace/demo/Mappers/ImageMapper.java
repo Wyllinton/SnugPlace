@@ -9,10 +9,8 @@ import java.util.List;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING, unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ImageMapper {
 
-    @Mapping(source = "accommodationId.id", target = "accommodationId")
     ImageDTO toImageDTO(Image image);
 
-    @Mapping(source = "accommodationId", target = "accommodationId", qualifiedByName = "mapAccommodation")
     @Mapping(target = "uploadedTime", expression = "java(java.time.LocalDate.now())")
     Image toEntity(ImageDTO imageDTO);
 

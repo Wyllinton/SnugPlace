@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -38,7 +39,7 @@ public class Accommodation {
     private double priceDay;
 
     @Column(nullable = false)
-    private int guetsCount;
+    private int guestsCount;
 
     @Column(nullable = false)
     private LocalDate publicationDate;
@@ -48,10 +49,11 @@ public class Accommodation {
 
     @ElementCollection
     @Enumerated(EnumType.STRING)
-    private List<Service> services;
+    private Set<Service> services;
 
+    // Use Set to avoid Hibernate MultipleBagFetchException when fetching multiple collections
     @OneToMany(mappedBy = "accommodationId", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Image> images;
+    private Set<Image> images;
 
     @OneToMany(mappedBy = "accommodationId", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
