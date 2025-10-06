@@ -30,7 +30,7 @@ public class Notification {
     @Column(nullable = false)
     private LocalDateTime date;
 
-    @Column(nullable = false)
+    @Column(name = "is_read",nullable = false)
     private boolean read;
 
     @ManyToOne

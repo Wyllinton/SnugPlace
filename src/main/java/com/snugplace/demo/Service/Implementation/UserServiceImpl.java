@@ -7,11 +7,12 @@ import com.snugplace.demo.DTO.User.UserDTO;
 import com.snugplace.demo.Exceptions.ResourceNotFoundException;
 import com.snugplace.demo.Exceptions.ValueConflictException;
 import com.snugplace.demo.Mappers.UserMapper;
+import com.snugplace.demo.Model.Enums.UserStatus;
 import com.snugplace.demo.Model.User;
 import com.snugplace.demo.Repository.UserRepository;
 import com.snugplace.demo.Service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.Map;
 import java.util.Optional;
@@ -23,6 +24,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public void registerUser(CreateUserDTO createUserDTO) throws Exception{
@@ -69,7 +71,9 @@ public class UserServiceImpl implements UserService {
         if (userOptional.isEmpty()) {
             throw new Exception("Usuario no encontrado.");
         }
-        userRepository.delete(userOptional.get());
+        User user = userOptional.get();
+        user.setStatus(UserStatus.INACTIVE);
+        userRepository.save(user);
     }
 
     @Override
@@ -82,10 +86,12 @@ public class UserServiceImpl implements UserService {
         }else{
             User user = userOptional.get();
             if(changeUserPasswordDTO.currentPassword().equals(changeUserPasswordDTO.newPassword())){
-                throw new Exception("Debe ser una contraseña diferente");
-            }else{
-                user.setPassword(changeUserPasswordDTO.newPassword());
+                throw new Exception("Las contraseñas no pueden ser iguales");
+            } else if (passwordEncoder.matches(changeUserPasswordDTO.currentPassword(), user.getPassword())) {
+                user.setPassword(encode(changeUserPasswordDTO.newPassword()));
                 userRepository.save(user);
+            } else {
+                throw new Exception("Contraseña actual incorrecta");
             }
         }
     }
@@ -94,7 +100,6 @@ public class UserServiceImpl implements UserService {
 
     //We encrypt the password before saving it.
     private String encode(String password){
-        var passwordEncoder = new BCryptPasswordEncoder();
         return passwordEncoder.encode(password);
     }
 

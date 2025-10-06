@@ -16,7 +16,7 @@ public record CreateUserDTO (
         @Email @NotNull @Length(max = 40) String email,
         @NotBlank @Length(min = 8, max = 30) String password,
         @NotNull @Length(max = 10) String phoneNumber,
-        @NotNull  @Past LocalDate birhtDate,
+        @NotNull  @Past LocalDate birthDate,
         @NotNull  @Past LocalDateTime createdAt,
         Role role,
         UserStatus status,

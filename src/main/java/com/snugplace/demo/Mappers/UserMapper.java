@@ -15,6 +15,7 @@ public interface UserMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "status", constant = "ACTIVE")
     @Mapping(target = "createdAt", expression = "java(java.time.LocalDateTime.now())")
+    @Mapping(target = "Role", expression = "java((userDTO.role() != null && userDTO.role() != com.snugplace.demo.Model.Enums.Role.USER) ? userDTO.role() : com.snugplace.demo.Model.Enums.Role.GUEST)")
     User toEntity(CreateUserDTO userDTO);
 
     UserDTO toUserDTO(User user);

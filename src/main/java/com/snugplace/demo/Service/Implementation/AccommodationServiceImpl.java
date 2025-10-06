@@ -6,6 +6,7 @@ import com.snugplace.demo.DTO.Accommodation.FilterAccommodationDTO;
 import com.snugplace.demo.DTO.Comment.CommentDTO;
 import com.snugplace.demo.Mappers.AccommodationMapper;
 import com.snugplace.demo.Model.Accommodation;
+import com.snugplace.demo.Model.Enums.AccommodationStatus;
 import com.snugplace.demo.Repository.AccommodationRepository;
 import com.snugplace.demo.Service.AccommodationService;
 import lombok.RequiredArgsConstructor;
@@ -52,7 +53,9 @@ public class AccommodationServiceImpl implements AccommodationService {
     public void deleteAccommodation(Long id) throws Exception {
         Optional<Accommodation> accommodation = accommodationRepository.findById(id);
         if (accommodation.isPresent()) {
-            accommodationRepository.deleteById(id);
+            Accommodation entity = accommodation.get();
+            entity.setStatus(AccommodationStatus.INACTIVE);
+            accommodationRepository.save(entity);
         }else{
             throw new Exception("No se encontro el alojamiento");
         }

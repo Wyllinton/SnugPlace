@@ -5,7 +5,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public record UpdateProfileDTO(
-        @NotBlank Long id,
         @NotBlank String name,
         @NotBlank String phoneNumber,
         @NotNull String photoURL,

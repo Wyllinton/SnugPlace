@@ -11,7 +11,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 public record CreateAccommodationDTO(
-        @NotNull Long id,
         @NotNull HostDTO host,
         @NotBlank @Size(max = 100) String title,
         @NotBlank @Size(max = 500) String description,
