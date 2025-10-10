@@ -1,7 +1,5 @@
 package com.snugplace.demo.Security;
 
-import com.snugplace.demo.Service.Implementation.UserDetailsServiceImpl;
-import com.snugplace.demo.Service.Implementation.UserServiceImpl;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import jakarta.servlet.FilterChain;
@@ -10,65 +8,63 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class JWTFilter extends OncePerRequestFilter{
+public class JWTFilter extends OncePerRequestFilter {
 
     private final JWTUtils jwtUtil;
-    private final UserDetailsServiceImpl userDetailsService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain chain) throws ServletException, IOException {
 
-        // Obtener el token del header de la solicitud
         String token = getToken(request);
 
-        // Si no hay token, continuar con la cadena de filtros
         if (token == null) {
             chain.doFilter(request, response);
             return;
         }
 
         try {
-            // Validar el token y obtener el payload
+            // Validar y obtener los claims del token
             Jws<Claims> payload = jwtUtil.parseJwt(token);
-            String username = payload.getPayload().getSubject();
+            Claims claims = payload.getPayload();
 
-            // Si el usuario no está autenticado, crear un nuevo objeto de autenticación
-            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            String username = claims.getSubject();
+            String role = claims.get("role", String.class);
 
-                // Crear un objeto UserDetails con el nombre de usuario y el rol
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            if (username != null && role != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-                // Crear un objeto de autenticación y establecerlo en el contexto de seguridad
-                UsernamePasswordAuthenticationToken authentication = new
-                        UsernamePasswordAuthenticationToken(
-                        userDetails,
-                        null,
-                        userDetails.getAuthorities()
-                );
+                // 👇 Spring espera los roles con prefijo "ROLE_"
+                GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + role);
+                List<GrantedAuthority> authorities = List.of(authority);
+
+                // Crear la autenticación sin consultar la BD
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(username, null, authorities);
+
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
+
         } catch (Exception e) {
-            // Si el token no es válido, enviar un error 401
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
             return;
         }
 
-        // Continuar con la cadena de filtros
         chain.doFilter(request, response);
     }
 
     private String getToken(HttpServletRequest req) {
         String header = req.getHeader("Authorization");
-        return header != null && header.startsWith("Bearer ") ? header.replace("Bearer ", "") : null;
+        return (header != null && header.startsWith("Bearer ")) ? header.substring(7) : null;
     }
 }

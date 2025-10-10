@@ -58,7 +58,7 @@ public class Accommodation {
     @OneToMany(mappedBy = "accommodationId", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Image> images;
 
-    @OneToMany(mappedBy = "accommodationId", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "accommodation", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
 
     @ManyToOne

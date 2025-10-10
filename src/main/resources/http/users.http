@@ -8,14 +8,13 @@ POST http://localhost:8080/users/register
 Content-Type: application/json
 
 {
-  "name": "Juan Pablo Lopez",
-  "email": "pablo.lopez.g2005@gmail.com",
+  "name": "Willinton Vergara",
+  "email": "vergarawillinton04@gmail.com",
   "password": "admin12345",
-  "phoneNumber": "3016973283",
-  "birthDate": "2005-07-30",
-  "status": "ACTIVE",
+  "phoneNumber": "304567645",
+  "birthDate": "2005-02-04",
   "role": "HOST",
-  "description": "Hola soy Pablo, conocido como Pablópez y soy el co-creador de esta app",
+  "description": "Hola soy Willitnon, conocido como La Bestia y soy el co-creador de esta app",
   "profilePhoto": ""
 }
 

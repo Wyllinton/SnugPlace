@@ -5,6 +5,7 @@ import com.snugplace.demo.Security.JWTFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -35,7 +36,23 @@ public class SecurityConfig {
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(req -> req
-                        .requestMatchers("/auth/login","/users/register").permitAll()
+                        // Endpoints públicos
+                        .requestMatchers("/auth/**", "/users/register").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/accommodations/**").permitAll()
+
+                        // Endpoints de bookings
+                        .requestMatchers(HttpMethod.POST, "/bookings", "/bookings/**").hasAnyRole("USER","HOST","ADMIN","GUEST")
+                        .requestMatchers(HttpMethod.PUT, "/bookings/**/cancel").hasAnyRole("USER","HOST","ADMIN","GUEST")
+                        .requestMatchers("/bookings/my-bookings-host/**").hasRole("HOST")
+                        .requestMatchers("/bookings/my-bookings-user/**").hasAnyRole("USER","ADMIN","GUEST")
+
+                        // Endpoints de accommodations protegidas
+                        .requestMatchers(HttpMethod.POST, "/accommodations/**").hasRole("HOST")
+                        .requestMatchers(HttpMethod.PATCH, "/accommodations/**").hasRole("HOST")
+                        .requestMatchers(HttpMethod.DELETE, "/accommodations/**").hasRole("HOST")
+                        .requestMatchers("/accommodations/my-accomodations").hasRole("HOST")
+
+                        // Cualquier otro endpoint necesita autenticación
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(new JWTAuthenticationEntryPoint()))

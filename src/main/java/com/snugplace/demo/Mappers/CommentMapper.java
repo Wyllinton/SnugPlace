@@ -18,8 +18,7 @@ public interface CommentMapper {
     CommentDTO toCommentDTO(Comment comment);
 
     @Mapping(target = "booking.id", source = "idBooking")
-    @Mapping(target = "user", source = "user")
-    @Mapping(target = "accommodationId", ignore = true) // se setea después en el service si hace falta
+    @Mapping(target = "accommodation", ignore = true) // se setea después en el service si hace falta
     Comment toEntity(CreateCommentDTO dto);
 
     List<CommentDTO> toDTOList(List<Comment> comments);

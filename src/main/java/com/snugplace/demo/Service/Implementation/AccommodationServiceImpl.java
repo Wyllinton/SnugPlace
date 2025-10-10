@@ -6,19 +6,27 @@ import com.snugplace.demo.DTO.Accommodation.FilterAccommodationDTO;
 import com.snugplace.demo.DTO.Accommodation.UpdateAccommodationDTO;
 import com.snugplace.demo.DTO.Comment.CommentDTO;
 import com.snugplace.demo.Mappers.AccommodationMapper;
-import com.snugplace.demo.Model.Accommodation;
-import com.snugplace.demo.Model.Booking;
+import com.snugplace.demo.Mappers.CommentMapper;
+import com.snugplace.demo.Model.*;
 import com.snugplace.demo.Model.Enums.AccommodationStatus;
-import com.snugplace.demo.Model.Image;
 import com.snugplace.demo.Repository.AccommodationRepository;
 import com.snugplace.demo.Repository.BookingRepository;
+import com.snugplace.demo.Repository.CommentRepository;
+import com.snugplace.demo.Repository.UserRepository;
+import com.snugplace.demo.Security.AuthUtils;
 import com.snugplace.demo.Service.AccommodationService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -26,15 +34,20 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
-
 @Service
 @RequiredArgsConstructor
 public class AccommodationServiceImpl implements AccommodationService {
 
     private final AccommodationMapper accommodationMapper;
+    private final CommentMapper commentMapper;
     private final AccommodationRepository accommodationRepository;
+    private final UserRepository userRepository;
+    private final CommentRepository commentRepository;
     private final EntityManager entityManagerFactory;
     private final BookingRepository bookingRepository;
+
+    @Autowired
+    private AuthUtils authUtils;
 
     @Override
     public void createAccommodation(CreateAccommodationDTO createAccommodationDTO) throws Exception {
@@ -168,6 +181,7 @@ public class AccommodationServiceImpl implements AccommodationService {
             Accommodation entity = accommodation.get();
             entity.setStatus(AccommodationStatus.INACTIVE);
             accommodationRepository.save(entity);
+            //Add the future booking validation
         }else{
             throw new Exception("No se encontro el alojamiento");
         }
@@ -190,13 +204,34 @@ public class AccommodationServiceImpl implements AccommodationService {
         return overlapping.isEmpty();
     }
 
+    @Transactional
     @Override
     public List<AccommodationDTO> myAccommodations(Integer page) throws Exception {
-        return List.of();
+        String email = authUtils.getAuthenticatedEmail();
+        User host = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        Pageable pageable = (Pageable) PageRequest.of(page, 10, Sort.by("id").descending());
+
+        Page<Accommodation> accommodationsPage = accommodationRepository
+                .findByUserAndStatus(host, AccommodationStatus.ACTIVE, pageable);
+
+        return accommodationsPage.getContent()
+                .stream()
+                .map(accommodationMapper::toAccommodationDTO)
+                .collect(Collectors.toList());
     }
 
+    @Transactional
     @Override
     public List<CommentDTO> getAccommodationsComments(Long id) throws Exception {
-        return List.of();
+        Accommodation accommodation = accommodationRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Alojamiento no encontrado"));
+
+
+        List<Comment> comments = commentRepository.findByAccommodationId(accommodation.getId());
+
+
+        return commentMapper.toDTOList(comments);
     }
 }

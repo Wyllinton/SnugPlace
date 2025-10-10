@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -68,7 +69,8 @@ public class AccommodationController {
     }
 
     @GetMapping("/my-accomodations")
-    public ResponseEntity<ResponseListDTO<List<AccommodationDTO>>> myAccommodations(@NotNull Integer page) throws Exception{
+    @PreAuthorize("hasAuthority('HOST')")
+    public ResponseEntity<ResponseListDTO<List<AccommodationDTO>>> myAccommodations(@RequestParam(defaultValue = "0") Integer page) throws Exception{
         List<AccommodationDTO> accommodations = accommodationService.myAccommodations(page);
         return ResponseEntity.ok(new ResponseListDTO<>(false, "Consulta exitosa de lista de alojamientos", accommodations));
     }

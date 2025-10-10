@@ -20,4 +20,6 @@ public interface UserService {
     void deleteUser(Long id) throws Exception;
 
     void changeUserPassword(Long id, ChangeUserPasswordDTO changeUserPasswordDTO) throws Exception;
+
+    void updatePassword(String email, String newPassword) throws Exception;
 }

@@ -33,7 +33,7 @@ public class Comment {
     // Link comment directly to its accommodation to match Accommodation.comments mappedBy = "accommodation"
     @ManyToOne
     @JoinColumn(name = "accommodationId", nullable = false)
-    private Accommodation accommodationId;
+    private Accommodation accommodation;
 
     @ManyToOne
     @JoinColumn(name = "userId", nullable = false)

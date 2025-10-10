@@ -34,36 +34,33 @@ public class MailServiceImpl implements MailService {
     @Override
     public void sendSimpleEmail(String to, String subject, String text) {
         var email = EmailBuilder.startingBlank()
-                .from("snugplace", username)
+                .from("SnugPlace", username)
                 .to(to)
                 .withSubject(subject)
                 .withPlainText(text)
                 .buildEmail();
-
         getMailer().sendMail(email);
     }
 
     @Override
     public void sendHtmlEmail(String to, String subject, String htmlContent) {
         var email = EmailBuilder.startingBlank()
-                .from("snugplace", username)
+                .from("SnugPlace", username)
                 .to(to)
                 .withSubject(subject)
                 .withHTMLText(htmlContent)
                 .buildEmail();
-
         getMailer().sendMail(email);
     }
 
     @Override
     public void sendPersonalizedEmail(String toName, String toEmail, String subject, String htmlContent) {
         var email = EmailBuilder.startingBlank()
-                .from("snugplace", username)
+                .from("SnugPlace", username)
                 .to(toName, toEmail)
                 .withSubject(subject)
                 .withHTMLText(htmlContent)
                 .buildEmail();
-
         getMailer().sendMail(email);
     }
 }

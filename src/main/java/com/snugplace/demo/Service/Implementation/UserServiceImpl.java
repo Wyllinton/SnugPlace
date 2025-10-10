@@ -11,6 +11,7 @@ import com.snugplace.demo.Model.Enums.UserStatus;
 import com.snugplace.demo.Model.User;
 import com.snugplace.demo.Repository.UserRepository;
 import com.snugplace.demo.Service.UserService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -103,6 +104,19 @@ public class UserServiceImpl implements UserService {
             }
         }
     }
+
+    @Transactional
+    @Override
+    public void updatePassword(String email, String nuevaPassword) throws Exception {
+        UserDTO userDTO = getUserByEmail(email);
+        if (userDTO == null) {
+            throw new Exception("Usuario no encontrado");
+        }
+
+        String encodedPassword = passwordEncoder.encode(nuevaPassword);
+        userRepository.updatePasswordByEmail(email, encodedPassword);
+    }
+
 
     @Override
     public boolean passwordIsCorrect(String email, String password) {

@@ -7,6 +7,23 @@ POST {{baseUrl}}/auth/login
 Content-Type: application/json
 
 {
-  "email": "pablo.lopez.g2005@gmail.com",
+  "email": "vergarawillinton04@gmail.com",
   "password": "admin12345"
+}
+
+### Recover password
+POST {{baseUrl}}/auth/recover-password
+Content-Type: application/json
+
+{
+  "email": "pablo.lopez.g2005@gmail.com"
+}
+
+### Reset password
+POST {{baseUrl}}/auth/reset-password
+Content-Type: application/json
+
+{
+  "codigo": "639121",
+  "nuevaPassword": "jajajijiji"
 }

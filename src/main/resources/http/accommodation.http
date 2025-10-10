@@ -1,28 +1,29 @@
 ### Accommodation HTTP tests for AccommodationServiceImpl via AccommodationController
 
 @baseUrl = http://localhost:8080
-@accommodationId = 2
-@hostId = 2
+@accommodationId = 6
+@hostId = 4
 
 ### Create a new accommodation
 POST {{baseUrl}}/accommodations
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiSE9TVCIsInVzZXJJZCI6IjQiLCJlbWFpbCI6InZlcmdhcmF3aWxsaW50b24wNEBnbWFpbC5jb20iLCJzdWIiOiJ2ZXJnYXJhd2lsbGludG9uMDRAZ21haWwuY29tIiwiaWF0IjoxNzYwMTQwNTQyLCJleHAiOjE3NjAxNDQxNDJ9.gKQohT7_F32Oh34HaoLGrcX0O4RRmfNMTXuDZ5TUSRO3ivsvwRmdwV883ILDUsPlTzr992qAktsCsTHRKxHrFA
 
 {
   "host": {
     "id": {{hostId}}
   },
-  "title": "Apartamento en Los laureles del Sur",
-  "description": "Mucha más seguridad y exlusividad",
-  "city": "Armenia",
-  "address": "Zona sur Armenia",
-  "latitude": 80.5,
-  "longitude": -12.633,
-  "priceDay": 98000,
-  "guestsCount": 7,
+  "title": "Casa campestre",
+  "description": "Seguridad y buenas vistas",
+  "city": "La tebaida",
+  "address": "La tebaida Cra13 #28-35",
+  "latitude": 20.5,
+  "longitude": -58.633,
+  "priceDay": 750000,
+  "guestsCount": 10,
   "averageRating": 0.0,
   "status": "ACTIVE",
-  "services": ["PATIO", "PARKING"],
+  "services": ["PATIO", "PARKING", "POOL", "BACKYARD", "WIFI"],
   "images": [],
   "comments": []
 }
@@ -35,20 +36,20 @@ GET {{baseUrl}}/accommodations
 Content-Type: application/json
 
 {
-  "city": "Armenia",
-  "minPrice": 300000
+  "city": "Armenia"
 }
 
 ### Verify availability of an accommodation
-GET {{baseUrl}}/accommodations/{{accommodationId}}/availability?checkIn=2025-10-16&checkOut=2025-10-18
+GET {{baseUrl}}/accommodations/{{accommodationId}}/availability?checkIn=2025-10-11&checkOut=2025-10-18
 
 ### List my accommodations (paged)
 GET {{baseUrl}}/accommodations/my-accomodations?page=0
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiSE9TVCIsInVzZXJJZCI6IjQiLCJlbWFpbCI6InZlcmdhcmF3aWxsaW50b24wNEBnbWFpbC5jb20iLCJzdWIiOiJ2ZXJnYXJhd2lsbGludG9uMDRAZ21haWwuY29tIiwiaWF0IjoxNzYwMTQwNTQyLCJleHAiOjE3NjAxNDQxNDJ9.gKQohT7_F32Oh34HaoLGrcX0O4RRmfNMTXuDZ5TUSRO3ivsvwRmdwV883ILDUsPlTzr992qAktsCsTHRKxHrFA
 
 ### List comments of an accommodation
 GET {{baseUrl}}/accommodations/{{accommodationId}}/comments
 
-### Update an accommodation (placeholder endpoint)
+### Update an accommodation
 PATCH {{baseUrl}}/accommodations/{{accommodationId}}
 Content-Type: application/json
 
@@ -67,4 +68,5 @@ Content-Type: application/json
 
 ### Delete an accommodation
 DELETE {{baseUrl}}/accommodations/{{accommodationId}}
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiSE9TVCIsInVzZXJJZCI6IjQiLCJlbWFpbCI6InZlcmdhcmF3aWxsaW50b24wNEBnbWFpbC5jb20iLCJzdWIiOiJ2ZXJnYXJhd2lsbGludG9uMDRAZ21haWwuY29tIiwiaWF0IjoxNzYwMTQwNTQyLCJleHAiOjE3NjAxNDQxNDJ9.gKQohT7_F32Oh34HaoLGrcX0O4RRmfNMTXuDZ5TUSRO3ivsvwRmdwV883ILDUsPlTzr992qAktsCsTHRKxHrFA
 

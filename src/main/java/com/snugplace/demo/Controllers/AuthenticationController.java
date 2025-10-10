@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -40,10 +42,16 @@ public class AuthenticationController {
     }
 
     @PostMapping("/recover-password")
-    public ResponseEntity<ResponseDTO<String>> recoverPassword(@Email @NotNull String email) throws Exception{
+    public ResponseEntity<ResponseDTO<String>> recoverPassword(@RequestBody Map<String, String> request) throws Exception {
+        String email = request.get("email");
+        if (email == null || email.isBlank()) {
+            throw new IllegalArgumentException("El email es obligatorio");
+        }
         authenticationService.recoverPassword(email);
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO<>(false, "Código enviado exitosamente"));
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new ResponseDTO<>(false, "Código enviado exitosamente"));
     }
+
 
     @PostMapping("/reset-password")
     public ResponseEntity<ResponseDTO<String>> resetPassword(@Valid @RequestBody ResetPasswordDTO resetPasswordDTO) throws Exception{
