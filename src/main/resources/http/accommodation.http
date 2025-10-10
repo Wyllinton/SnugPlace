@@ -1,8 +1,8 @@
 ### Accommodation HTTP tests for AccommodationServiceImpl via AccommodationController
 
 @baseUrl = http://localhost:8080
-@accommodationId = 3
-@hostId = 7
+@accommodationId = 2
+@hostId = 2
 
 ### Create a new accommodation
 POST {{baseUrl}}/accommodations
@@ -12,18 +12,17 @@ Content-Type: application/json
   "host": {
     "id": {{hostId}}
   },
-  "title": "Alojamiento céntrico y cómodo",
-  "description": "Apartamento completamente amoblado cerca al centro",
+  "title": "Apartamento en Los laureles del Sur",
+  "description": "Mucha más seguridad y exlusividad",
   "city": "Armenia",
-  "address": "Cra 10 #20-30",
-  "latitude": 4.5333,
-  "longitude": -75.6833,
-  "priceDay": 120000,
-  "guestsCount": 2,
+  "address": "Zona sur Armenia",
+  "latitude": 80.5,
+  "longitude": -12.633,
+  "priceDay": 98000,
+  "guestsCount": 7,
   "averageRating": 0.0,
-  "publicationDate": "2025-10-01",
   "status": "ACTIVE",
-  "services": ["WIFI", "PARKING"],
+  "services": ["PATIO", "PARKING"],
   "images": [],
   "comments": []
 }
@@ -37,17 +36,11 @@ Content-Type: application/json
 
 {
   "city": "Armenia",
-  "fechaCheckIn": "2025-10-10",
-  "fechaCheckOut": "2025-10-12",
-  "minPrice": 0,
-  "maxPrice": 300000,
-  "guestsCount": 2,
-  "services": ["WIFI"],
-  "page": 0
+  "minPrice": 300000
 }
 
 ### Verify availability of an accommodation
-GET {{baseUrl}}/accommodations/{{accommodationId}}/availability?checkIn=2025-10-15&checkOut=2025-10-18
+GET {{baseUrl}}/accommodations/{{accommodationId}}/availability?checkIn=2025-10-16&checkOut=2025-10-18
 
 ### List my accommodations (paged)
 GET {{baseUrl}}/accommodations/my-accomodations?page=0

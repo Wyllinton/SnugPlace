@@ -22,7 +22,7 @@ public record CreateAccommodationDTO(
         @Positive double priceDay,
         @Min(1) int guestsCount,
         @DecimalMin("0.0") @DecimalMax("5.0") double averageRating,
-        @NotNull @PastOrPresent LocalDate publicationDate,
+        //@NotNull @PastOrPresent LocalDate publicationDate,
         @NotNull AccommodationStatus status,
         @NotNull @Size(min = 1) List<Service> services,
         @NotNull Set<Image> images,

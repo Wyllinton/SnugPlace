@@ -17,7 +17,6 @@ public record BookingDTO(
         @Min(1) int guestsCount,
         @NotNull BookingStatus status,
         @PositiveOrZero double price,
-        @NotNull LocalDate createDate,
         List<CommentDTO> comments
 ) {
 }

@@ -6,7 +6,6 @@ import jakarta.validation.constraints.*;
 import java.time.LocalDate;
 
 public record CreateBookingDTO(
-        @NotNull Long id,
         @NotNull Long idUser,
         @NotNull Long idAccommodation,
         @NotNull @FutureOrPresent LocalDate dateCheckIn,

@@ -8,11 +8,11 @@ import java.util.List;
 import java.util.Set;
 
 public record FilterAccommodationDTO(
-        @NotNull @NotBlank String city,
-        @FutureOrPresent LocalDate fechaCheckIn,
-        @Future LocalDate fechaCheckOut,
+        String city,
+        @FutureOrPresent LocalDate checkIn,
+        @Future LocalDate checkOut,
         @PositiveOrZero
-        @NotNull @NotBlank @Positive Double minPrice,
+        @Positive Double minPrice,
         @PositiveOrZero Double maxPrice,
         @Min(1) Integer guestsCount,
         Set<Service> services,

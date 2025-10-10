@@ -7,6 +7,7 @@ import com.snugplace.demo.Model.Enums.BookingStatus;
 import jakarta.validation.constraints.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public record BookingDetailDTO(
@@ -18,7 +19,7 @@ public record BookingDetailDTO(
         @Min(1) int guestsCount,
         @NotNull BookingStatus status,
         @PositiveOrZero double price,
-        @NotNull LocalDate createDate,
+        @NotNull LocalDateTime createdAt,
         List<CommentDTO> comments
 ) {
 }

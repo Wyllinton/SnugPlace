@@ -3,7 +3,10 @@ package com.snugplace.demo.Model;
 import com.snugplace.demo.Model.Enums.BookingStatus;
 import jakarta.persistence.*;
         import lombok.*;
-        import java.time.LocalDate;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -33,6 +36,10 @@ public class Booking {
 
     @Column(nullable = false)
     private double price;
+
+    @CreationTimestamp
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
 
     @ManyToOne
     @JoinColumn(name = "accommodationId", nullable = false)

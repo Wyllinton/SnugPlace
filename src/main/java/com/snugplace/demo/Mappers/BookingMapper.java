@@ -11,18 +11,15 @@ public interface BookingMapper {
     @Mapping(source = "accommodation.id", target = "idAccommodation")
     @Mapping(source = "user", target = "user")
     @Mapping(source = "comments", target = "comments")
-    @Mapping(target = "createDate", expression = "java(java.time.LocalDate.now())")
     BookingDTO toBookingDTO(Booking booking);
 
     @Mapping(source = "accommodation.id", target = "idAccommodation")
     @Mapping(source = "user", target = "user")
     @Mapping(source = "comments", target = "comments")
-    @Mapping(target = "createDate", expression = "java(java.time.LocalDate.now())")
     BookingDetailDTO toBookingDetailDTO(Booking booking);
 
     List<BookingDTO> toBookingDTOList(List<Booking> bookings);
 
-    @Mapping(target = "id", ignore = true)
     @Mapping(target = "accommodation.id", source = "idAccommodation")
     @Mapping(target = "user.id", source = "idUser")
     @Mapping(source = "dateCheckIn", target = "dateCheckIn")

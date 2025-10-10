@@ -1,0 +1,12 @@
+### Authentication HTTP tests for AuthenticationServiceImpl via AuthenticationController
+
+@baseUrl = http://localhost:8080
+
+### Login user
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "pablo.lopez.g2005@gmail.com",
+  "password": "admin12345"
+}

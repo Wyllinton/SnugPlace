@@ -10,7 +10,6 @@ import java.util.Date;
 
 @Service
 @RequiredArgsConstructor
-
 public class MetricServiceImpl implements MetricService {
 
     @Override

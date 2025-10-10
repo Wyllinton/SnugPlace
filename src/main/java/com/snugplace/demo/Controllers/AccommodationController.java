@@ -12,12 +12,12 @@ import com.snugplace.demo.Service.AccommodationService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+
+import java.util.*;
 
 @RestController()
 @RequestMapping("/accommodations")
@@ -57,9 +57,14 @@ public class AccommodationController {
     }
 
     @GetMapping("/{id}/availability")
-    public ResponseEntity<ResponseDTO<String>> verifyAvailabilityAccommodation(@PathVariable Long id, @NotNull Date checkIn, @NotNull Date checkOut) throws Exception{
-        accommodationService.verifyAvailabilityAccommodation(id, checkIn, checkOut);
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO<>(false,"Se buscó estado de disponibilidad"));
+    public ResponseEntity<Map<String,Object>> verifyAvailabilityAccommodation(@PathVariable Long id, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date checkIn,
+                                                                               @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date checkOut) throws Exception{
+        boolean available = accommodationService.verifyAvailabilityAccommodation(id, checkIn, checkOut);
+        Map<String, Object> response = new HashMap<>();
+        response.put("error", false);
+        response.put("available", available);
+        response.put("message", available ? "Alojamiento disponible" : "Alojamiento no disponible");
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/my-accomodations")

@@ -1,0 +1,21 @@
+### Booking HTTP tests for BookingServiceImpl via BookingController
+
+@bookingId = 4
+
+###Create booking
+POST http://localhost:8080/bookings
+Content-Type: application/json
+
+{
+  "idUser": 2,
+  "idAccommodation": 2,
+  "dateCheckIn": "2025-10-13",
+  "dateCheckOut": "2025-10-15",
+  "guestsCount": 4,
+  "status": "PENDING",
+  "price": 230000.0,
+  "notes": "OMG necesito una piscina para bañarme"
+}
+
+###Bookin's cancelation
+PUT http://localhost:8080/bookings/{{bookingId}}/cancel

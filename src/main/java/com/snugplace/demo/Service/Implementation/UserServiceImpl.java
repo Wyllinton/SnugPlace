@@ -14,9 +14,7 @@ import com.snugplace.demo.Service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @RequiredArgsConstructor
@@ -43,6 +41,16 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con ID: " + id));
 
         return userMapper.toUserDTO(user);
+    }
+
+    @Override
+    public UserDTO getUserByEmail(String email) {
+        if (!userRepository.existsByEmailAndStatus(email, UserStatus.ACTIVE)) {
+            return null;
+        }
+        Optional<User> user = userRepository.findByEmailAndStatus(email, UserStatus.ACTIVE);
+
+        return userMapper.toUserDTO(user.get());
     }
 
     @Override
@@ -96,7 +104,21 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-//----------------------------------------------------------------------------------------------------------------------
+    @Override
+    public boolean passwordIsCorrect(String email, String password) {
+        User user = userRepository.findByEmailAndStatus(email,UserStatus.ACTIVE).orElse(null);
+        if (user == null) {
+            try {
+                throw new Exception("El usuario con el correo " + email + " no se encontró");
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+        System.out.println(passwordEncoder.matches(password, user.getPassword()));
+        return passwordEncoder.matches(password, user.getPassword());
+    }
+
+    //----------------------------------------------------------------------------------------------------------------------
 
     //We encrypt the password before saving it.
     private String encode(String password){

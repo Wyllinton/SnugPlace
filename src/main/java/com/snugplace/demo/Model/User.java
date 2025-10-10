@@ -4,8 +4,13 @@ import com.snugplace.demo.Model.Enums.Role;
 import com.snugplace.demo.Model.Enums.UserStatus;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -35,6 +40,7 @@ public class User {
     @Column(nullable = false)
     private LocalDate birthDate;
 
+    @CreationTimestamp
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
@@ -49,4 +55,5 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     private UserStatus status;
+
 }

@@ -4,6 +4,8 @@ import com.snugplace.demo.Model.Enums.AccommodationStatus;
 import com.snugplace.demo.Model.Enums.Service;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
@@ -41,6 +43,7 @@ public class Accommodation {
     @Column(nullable = false)
     private int guestsCount;
 
+    @CreationTimestamp
     @Column(nullable = false)
     private LocalDate publicationDate;
 
