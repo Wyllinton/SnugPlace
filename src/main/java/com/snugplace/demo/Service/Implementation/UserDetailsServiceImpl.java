@@ -1,4 +1,4 @@
 package com.snugplace.demo.Service.Implementation;
 
-public class AuthenticationServiceImpl {
+public class UserDetailsService {
 }
