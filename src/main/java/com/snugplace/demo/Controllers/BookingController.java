@@ -1,8 +1,6 @@
 package com.snugplace.demo.Controllers;
 
-import com.snugplace.demo.DTO.Booking.BookingDTO;
-import com.snugplace.demo.DTO.Booking.CreateBookingDTO;
-import com.snugplace.demo.DTO.Booking.FilteredBookingDTO;
+import com.snugplace.demo.DTO.Booking.*;
 import com.snugplace.demo.DTO.ResponseDTO;
 import com.snugplace.demo.Service.BookingService;
 import jakarta.validation.Valid;
@@ -32,10 +30,16 @@ public class BookingController {
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO<>(false, bookings));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ResponseDTO<String>> bookingDetail(@PathVariable Long id) throws Exception{
-        bookingService.bookingDetail(id);
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO<>(false,"Detalle de la reserva"));
+    @GetMapping("/{id}/detail")
+    public ResponseEntity<ResponseDTO<BookingDetailDTO>> bookingDetailHost(@PathVariable Long id) throws Exception{
+        BookingDetailDTO bookingDetails = bookingService.bookingDetailHost(id);
+        return ResponseEntity.ok(new ResponseDTO<>(false, bookingDetails));
+    }
+
+    @GetMapping("/{id}/detail-user")
+    public ResponseEntity<ResponseDTO<BookingDetailUserDTO>> bookingDetail(@PathVariable Long id) throws Exception{
+        BookingDetailUserDTO bookingDetails = bookingService.bookingDetail(id);
+        return ResponseEntity.ok(new ResponseDTO<>(false, bookingDetails));
     }
 
     @PutMapping("/{id}/confirm")

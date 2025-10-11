@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.*;
 
 @RestController()
@@ -58,8 +59,8 @@ public class AccommodationController {
     }
 
     @GetMapping("/{id}/availability")
-    public ResponseEntity<Map<String,Object>> verifyAvailabilityAccommodation(@PathVariable Long id, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date checkIn,
-                                                                               @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date checkOut) throws Exception{
+    public ResponseEntity<Map<String,Object>> verifyAvailabilityAccommodation(@PathVariable Long id, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkIn,
+                                                                               @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkOut) throws Exception{
         boolean available = accommodationService.verifyAvailabilityAccommodation(id, checkIn, checkOut);
         Map<String, Object> response = new HashMap<>();
         response.put("error", false);

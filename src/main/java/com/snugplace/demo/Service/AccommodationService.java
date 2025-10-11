@@ -7,6 +7,7 @@ import com.snugplace.demo.DTO.Accommodation.UpdateAccommodationDTO;
 import com.snugplace.demo.DTO.Comment.CommentDTO;
 
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -22,7 +23,7 @@ public interface AccommodationService {
 
     void deleteAccommodation(Long id) throws Exception;
 
-    boolean verifyAvailabilityAccommodation(Long id, Date checkIn, Date checkOut) throws Exception;
+    boolean verifyAvailabilityAccommodation(Long id, LocalDate checkIn, LocalDate checkOut) throws Exception;
 
     List<AccommodationDTO> myAccommodations(Integer page) throws Exception;
 

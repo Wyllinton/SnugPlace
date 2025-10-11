@@ -41,6 +41,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/accommodations/**").permitAll()
 
                         // Endpoints de bookings
+                        .requestMatchers(HttpMethod.GET, "/bookings/{id}/detail-user").hasAnyRole("USER","GUEST")
+                        .requestMatchers(HttpMethod.GET, "/bookings/{id}/detail").hasRole("HOST")
                         .requestMatchers(HttpMethod.POST, "/bookings", "/bookings/**").hasAnyRole("USER","HOST","ADMIN","GUEST")
                         .requestMatchers(HttpMethod.PUT, "/bookings/{id}/cancel").hasAnyRole("USER","HOST","ADMIN","GUEST")
                         .requestMatchers(HttpMethod.PUT, "/bookings/{id}/confirm").hasRole("HOST")
@@ -52,6 +54,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PATCH, "/accommodations/**").hasRole("HOST")
                         .requestMatchers(HttpMethod.DELETE, "/accommodations/**").hasRole("HOST")
                         .requestMatchers("/accommodations/my-accomodations").hasRole("HOST")
+
+                        // Endpoints Images
+                        .requestMatchers(HttpMethod.POST, "/images").permitAll()
 
                         // Cualquier otro endpoint necesita autenticación
                         .anyRequest().authenticated()

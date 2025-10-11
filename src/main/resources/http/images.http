@@ -1,0 +1,11 @@
+### Images HTTP tests for ImagesServiceImpl via ImageController
+
+POST http://localhost:8080/images
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="file"; filename="prueba.jpg"
+Content-Type: image/jpeg
+
+< C:\Users\LENOVO\Downloads\Logo_equipo.png
+--boundary--

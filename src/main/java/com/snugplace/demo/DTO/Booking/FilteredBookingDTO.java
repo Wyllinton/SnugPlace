@@ -9,7 +9,7 @@ public record FilteredBookingDTO(
         String description,
         @FutureOrPresent LocalDate dateCheckIn,
         @Future LocalDate dateCheckOut,
-        @Min(1) int guestsCount,
+        @Min(1) Integer guestsCount,
         @PositiveOrZero double price,
         @PositiveOrZero Integer page
 ) {

@@ -10,7 +10,9 @@ public interface BookingService {
 
     List<BookingDTO> searchFilteredBooking(FilteredBookingDTO filteredBookingDTO) throws Exception;
 
-    BookingDetailDTO bookingDetail(Long id) throws Exception;
+    BookingDetailDTO bookingDetailHost(Long id) throws Exception;
+
+    BookingDetailUserDTO bookingDetail(Long id) throws Exception;
 
     void cancelBooking(Long id, String reason) throws Exception;
 

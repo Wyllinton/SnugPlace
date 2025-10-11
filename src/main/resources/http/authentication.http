@@ -7,8 +7,8 @@ POST {{baseUrl}}/auth/login
 Content-Type: application/json
 
 {
-  "email": "vergarawillinton04@gmail.com",
-  "password": "admin12345"
+  "email": "rojo@gmail.com",
+  "password": "hola12345"
 }
 
 ### Recover password

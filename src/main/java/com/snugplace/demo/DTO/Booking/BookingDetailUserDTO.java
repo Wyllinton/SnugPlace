@@ -3,15 +3,13 @@ package com.snugplace.demo.DTO.Booking;
 import com.snugplace.demo.DTO.Comment.CommentDTO;
 import com.snugplace.demo.DTO.User.UserResponseDTO;
 import com.snugplace.demo.Model.Enums.BookingStatus;
-
 import jakarta.validation.constraints.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public record BookingDetailDTO(
-        @NotNull UserResponseDTO user,
+public record BookingDetailUserDTO(
         @FutureOrPresent LocalDate dateCheckIn,
         @Future LocalDate dateCheckOut,
         @Min(1) int guestsCount,

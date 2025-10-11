@@ -1,30 +1,32 @@
 ### Booking HTTP tests for BookingServiceImpl via BookingController
 
-@bookingId = 3
+@bookingId = 7
 
 ###Create booking
 POST http://localhost:8080/bookings
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiSE9TVCIsInVzZXJJZCI6IjQiLCJlbWFpbCI6InZlcmdhcmF3aWxsaW50b24wNEBnbWFpbC5jb20iLCJzdWIiOiJ2ZXJnYXJhd2lsbGludG9uMDRAZ21haWwuY29tIiwiaWF0IjoxNzYwMTQ5Nzc3LCJleHAiOjE3NjAxNTMzNzd9.N0oEtnagwnOuCK5oSJurtIjMHnJ_QYXwWkNdsnm5VKRFVJvtkO_kxoNoFsLGuWVVZEEzFazrM1h2LA5HIah-FQ
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiR1VFU1QiLCJ1c2VySWQiOiIxIiwiZW1haWwiOiJyb2pvQGdtYWlsLmNvbSIsInN1YiI6InJvam9AZ21haWwuY29tIiwiaWF0IjoxNzYwMTU1ODM0LCJleHAiOjE3NjAxNTk0MzR9.DVZAaWRMDr1budpmEttQ9XbyQ3sA_0k8mFkXBpiBljlPX9amQDpISxZtm4bHGAji2PjjgFMU2Jm0dtuyLZ7mEg
 
 {
-  "idAccommodation": 1,
-  "dateCheckIn": "2025-10-10",
-  "dateCheckOut": "2025-10-15",
-  "guestsCount": 3,
+  "idAccommodation": 7,
+  "dateCheckIn": "2025-10-18",
+  "dateCheckOut": "2025-10-20",
+  "guestsCount": 4,
   "notes": "Sin comentarios"
 }
 
 ###Search filtered booking
 GET http://localhost:8080/bookings
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiSE9TVCIsInVzZXJJZCI6IjQiLCJlbWFpbCI6InZlcmdhcmF3aWxsaW50b24wNEBnbWFpbC5jb20iLCJzdWIiOiJ2ZXJnYXJhd2lsbGludG9uMDRAZ21haWwuY29tIiwiaWF0IjoxNzYwMTQ1MDY2LCJleHAiOjE3NjAxNDg2NjZ9.eZF6_Gr2YWO0H3Aejwwhgk1unyFwbzqcvlZ8PHlv7RQ7fFRjV5dIWf7n1QXjI3MhAk4q46jZmH1nwNEMa6RTFA
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiR1VFU1QiLCJ1c2VySWQiOiIxIiwiZW1haWwiOiJyb2pvQGdtYWlsLmNvbSIsInN1YiI6InJvam9AZ21haWwuY29tIiwiaWF0IjoxNzYwMTU2NTk0LCJleHAiOjE3NjAxNjAxOTR9.t-4xzmyB1Vi4AZ2vZ6cgayjJ1o7iABvMnvazn_hgJg4lrWB03xljuBlRhYZj5mc7uesAOHIqffJZIzaWiTePmg
 
 {
-  "dateCheckIn": "2025-10-13",
-  "guestsCount": 4,
-  "price": 230000
+  "price": 1500000
 }
+
+###Get bookings' detail
+GET http://localhost:8080/bookings/{{bookingId}}/detail
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiSE9TVCIsInVzZXJJZCI6IjQiLCJlbWFpbCI6InZlcmdhcmF3aWxsaW50b24wNEBnbWFpbC5jb20iLCJzdWIiOiJ2ZXJnYXJhd2lsbGludG9uMDRAZ21haWwuY29tIiwiaWF0IjoxNzYwMTU1NjI0LCJleHAiOjE3NjAxNTkyMjR9.VxwCJ4bXsTLWGOkSPgeYH4F0TF18O6JcBK9m6wJqSknHh_32gog-Qb6ykUV-VuLvrDW1Ep9Zz_UW4hA-dl7l3g
 
 ###Confirm booking
 PUT http://localhost:8080/bookings/{{bookingId}}/confirm

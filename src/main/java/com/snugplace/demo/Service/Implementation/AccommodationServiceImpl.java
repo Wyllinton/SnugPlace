@@ -188,17 +188,15 @@ public class AccommodationServiceImpl implements AccommodationService {
     }
 
     @Override
-    public boolean verifyAvailabilityAccommodation(Long id, Date checkIn, Date checkOut) throws Exception {
-        LocalDate checkInLocal = checkIn.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        LocalDate checkOutLocal = checkOut.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+    public boolean verifyAvailabilityAccommodation(Long id, LocalDate checkIn, LocalDate checkOut) throws Exception {
 
         Accommodation accommodation = accommodationRepository.findById(id)
                 .orElseThrow(() -> new Exception("El alojamiento con id " + id + " no existe"));
 
         List<Booking> overlapping = bookingRepository.findOverlappingBookings(
                 accommodation.getId(),
-                checkInLocal,
-                checkOutLocal
+                checkIn,
+                checkOut
         );
 
         return overlapping.isEmpty();

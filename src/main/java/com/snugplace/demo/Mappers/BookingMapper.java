@@ -13,7 +13,7 @@ public interface BookingMapper {
     @Mapping(source = "comments", target = "comments")
     BookingDTO toBookingDTO(Booking booking);
 
-    @Mapping(source = "accommodation.id", target = "idAccommodation")
+
     @Mapping(source = "user", target = "user")
     @Mapping(source = "comments", target = "comments")
     BookingDetailDTO toBookingDetailDTO(Booking booking);

@@ -21,4 +21,9 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                                           @Param("checkOut") LocalDate checkOut);
 
     List<Booking> findByStatus(BookingStatus status);
+    @Query("SELECT b FROM Booking b WHERE b.accommodation.user.id = :userId")
+    List<Booking> findBookingsByAccommodationUserId(@Param("userId") Long userId);
+    @Query("SELECT b FROM Booking b WHERE b.user.id = :userId")
+    List<Booking> findBookingsByUserId(@Param("userId") Long userId);
+
 }
