@@ -63,6 +63,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/metrics/accommodations/{id}").hasRole("HOST")
                         .requestMatchers(HttpMethod.GET, "/metrics/summary").hasRole("HOST")
 
+                        //Endpoints Notification
+                        .requestMatchers(HttpMethod.GET, "/notifications/**").hasAnyRole("USER","HOST","ADMIN","GUEST")
+
                         // Endpoints Images
                         .requestMatchers(HttpMethod.POST, "/images").permitAll()
 

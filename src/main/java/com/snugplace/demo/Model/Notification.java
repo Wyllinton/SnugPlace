@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "Notification")
+@Table(name = "notifications")
 public class Notification {
 
     @Id
@@ -33,7 +33,7 @@ public class Notification {
     @Column(name = "is_read",nullable = false)
     private boolean read;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "receiverId", nullable = false)
     private User receiver;
 }
