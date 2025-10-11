@@ -38,6 +38,18 @@ public class BookingController {
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO<>(false,"Detalle de la reserva"));
     }
 
+    @PutMapping("/{id}/confirm")
+    public ResponseEntity<ResponseDTO<String>> confirmBooking(@PathVariable Long id) throws Exception {
+        bookingService.confirmBooking(id);
+        return ResponseEntity.ok(new ResponseDTO<>(false, "Reserva confirmada"));
+    }
+
+    @PutMapping("/{id}/cancel-by-host")
+    public ResponseEntity<ResponseDTO<String>> cancelBookingByHost(@PathVariable Long id) throws Exception {
+        bookingService.cancelBookingByHost(id);
+        return ResponseEntity.ok(new ResponseDTO<>(false, "Reserva cancelada por el host"));
+    }
+
     @PutMapping("/{id}/cancel")
     public ResponseEntity<ResponseDTO<String>> cancelBooking(@PathVariable Long id, String reason) throws Exception{
         bookingService.cancelBooking(id, reason);

@@ -21,11 +21,8 @@ public interface BookingMapper {
     List<BookingDTO> toBookingDTOList(List<Booking> bookings);
 
     @Mapping(target = "accommodation.id", source = "idAccommodation")
-    @Mapping(target = "user.id", source = "idUser")
     @Mapping(source = "dateCheckIn", target = "dateCheckIn")
     @Mapping(source = "dateCheckOut", target = "dateCheckOut")
     @Mapping(source = "guestsCount", target = "guestsCount")
-    @Mapping(source = "status", target = "status")
-    @Mapping(source = "price", target = "price")
     Booking toEntity(CreateBookingDTO dto);
 }

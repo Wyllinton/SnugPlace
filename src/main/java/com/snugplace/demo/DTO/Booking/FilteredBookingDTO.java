@@ -5,10 +5,8 @@ import jakarta.validation.constraints.*;
 import java.time.LocalDate;
 
 public record FilteredBookingDTO(
-        @NotBlank String titleAccommodation,
-        @NotBlank String description,
-        @NotBlank @NotNull Long id,
-        @NotBlank @NotNull Long idAccommodation,
+        String titleAccommodation,
+        String description,
         @FutureOrPresent LocalDate dateCheckIn,
         @Future LocalDate dateCheckOut,
         @Min(1) int guestsCount,

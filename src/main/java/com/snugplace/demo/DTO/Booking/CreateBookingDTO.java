@@ -6,13 +6,10 @@ import jakarta.validation.constraints.*;
 import java.time.LocalDate;
 
 public record CreateBookingDTO(
-        @NotNull Long idUser,
         @NotNull Long idAccommodation,
         @NotNull @FutureOrPresent LocalDate dateCheckIn,
         @NotNull @Future LocalDate dateCheckOut,
         @Min(1) int guestsCount,
-        @NotNull BookingStatus status,
-        @Positive double price,
         @Size(max = 500) String notes
 ) {
 }

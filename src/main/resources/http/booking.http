@@ -1,22 +1,35 @@
 ### Booking HTTP tests for BookingServiceImpl via BookingController
 
-@bookingId = 4
+@bookingId = 3
 
 ###Create booking
 POST http://localhost:8080/bookings
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiSE9TVCIsInVzZXJJZCI6IjQiLCJlbWFpbCI6InZlcmdhcmF3aWxsaW50b24wNEBnbWFpbC5jb20iLCJzdWIiOiJ2ZXJnYXJhd2lsbGludG9uMDRAZ21haWwuY29tIiwiaWF0IjoxNzYwMTQwNTQyLCJleHAiOjE3NjAxNDQxNDJ9.gKQohT7_F32Oh34HaoLGrcX0O4RRmfNMTXuDZ5TUSRO3ivsvwRmdwV883ILDUsPlTzr992qAktsCsTHRKxHrFA
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiSE9TVCIsInVzZXJJZCI6IjQiLCJlbWFpbCI6InZlcmdhcmF3aWxsaW50b24wNEBnbWFpbC5jb20iLCJzdWIiOiJ2ZXJnYXJhd2lsbGludG9uMDRAZ21haWwuY29tIiwiaWF0IjoxNzYwMTQ5Nzc3LCJleHAiOjE3NjAxNTMzNzd9.N0oEtnagwnOuCK5oSJurtIjMHnJ_QYXwWkNdsnm5VKRFVJvtkO_kxoNoFsLGuWVVZEEzFazrM1h2LA5HIah-FQ
 
 {
-  "idUser": 4,
-  "idAccommodation": 6,
-  "dateCheckIn": "2025-10-13",
+  "idAccommodation": 1,
+  "dateCheckIn": "2025-10-10",
   "dateCheckOut": "2025-10-15",
-  "guestsCount": 4,
-  "status": "PENDING",
-  "price": 230000.0,
-  "notes": "OMG necesito una piscina para bañarme"
+  "guestsCount": 3,
+  "notes": "Sin comentarios"
 }
+
+###Search filtered booking
+GET http://localhost:8080/bookings
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiSE9TVCIsInVzZXJJZCI6IjQiLCJlbWFpbCI6InZlcmdhcmF3aWxsaW50b24wNEBnbWFpbC5jb20iLCJzdWIiOiJ2ZXJnYXJhd2lsbGludG9uMDRAZ21haWwuY29tIiwiaWF0IjoxNzYwMTQ1MDY2LCJleHAiOjE3NjAxNDg2NjZ9.eZF6_Gr2YWO0H3Aejwwhgk1unyFwbzqcvlZ8PHlv7RQ7fFRjV5dIWf7n1QXjI3MhAk4q46jZmH1nwNEMa6RTFA
+
+{
+  "dateCheckIn": "2025-10-13",
+  "guestsCount": 4,
+  "price": 230000
+}
+
+###Confirm booking
+PUT http://localhost:8080/bookings/{{bookingId}}/confirm
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiSE9TVCIsInVzZXJJZCI6IjQiLCJlbWFpbCI6InZlcmdhcmF3aWxsaW50b24wNEBnbWFpbC5jb20iLCJzdWIiOiJ2ZXJnYXJhd2lsbGludG9uMDRAZ21haWwuY29tIiwiaWF0IjoxNzYwMTUwMzQzLCJleHAiOjE3NjAxNTM5NDN9.mAkkBKJHhQ7BCAqC0RJ8X5nMauKlPu3GqbQO136CRks2bDW__RZpcWGJskhg1c5t6dhGMy9ekVeiGZ6EK9yLwA
 
 ###Bookin's cancelation
 PUT http://localhost:8080/bookings/{{bookingId}}/cancel
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiSE9TVCIsInVzZXJJZCI6IjQiLCJlbWFpbCI6InZlcmdhcmF3aWxsaW50b24wNEBnbWFpbC5jb20iLCJzdWIiOiJ2ZXJnYXJhd2lsbGludG9uMDRAZ21haWwuY29tIiwiaWF0IjoxNzYwMTUwMzQzLCJleHAiOjE3NjAxNTM5NDN9.mAkkBKJHhQ7BCAqC0RJ8X5nMauKlPu3GqbQO136CRks2bDW__RZpcWGJskhg1c5t6dhGMy9ekVeiGZ6EK9yLwA

@@ -17,4 +17,8 @@ public interface BookingService {
     List<BookingDTO> searchFilteredBookingsHost(Long id) throws Exception;
 
     List<BookingDTO> searchFilteredBookingsUser (Long id) throws Exception;
+
+    void confirmBooking(Long id) throws Exception;
+
+    void cancelBookingByHost(Long id) throws Exception;
 }

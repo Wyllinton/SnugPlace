@@ -1,6 +1,7 @@
 package com.snugplace.demo.Repository;
 
 import com.snugplace.demo.Model.Booking;
+import com.snugplace.demo.Model.Enums.BookingStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -18,4 +19,6 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Booking> findOverlappingBookings(@Param("accommodationId") Long accommodationId,
                                           @Param("checkIn") LocalDate checkIn,
                                           @Param("checkOut") LocalDate checkOut);
+
+    List<Booking> findByStatus(BookingStatus status);
 }

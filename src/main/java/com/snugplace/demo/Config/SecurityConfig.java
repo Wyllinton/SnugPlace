@@ -42,7 +42,8 @@ public class SecurityConfig {
 
                         // Endpoints de bookings
                         .requestMatchers(HttpMethod.POST, "/bookings", "/bookings/**").hasAnyRole("USER","HOST","ADMIN","GUEST")
-                        .requestMatchers(HttpMethod.PUT, "/bookings/**/cancel").hasAnyRole("USER","HOST","ADMIN","GUEST")
+                        .requestMatchers(HttpMethod.PUT, "/bookings/{id}/cancel").hasAnyRole("USER","HOST","ADMIN","GUEST")
+                        .requestMatchers(HttpMethod.PUT, "/bookings/{id}/confirm").hasRole("HOST")
                         .requestMatchers("/bookings/my-bookings-host/**").hasRole("HOST")
                         .requestMatchers("/bookings/my-bookings-user/**").hasAnyRole("USER","ADMIN","GUEST")
 
