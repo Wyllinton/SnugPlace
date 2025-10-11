@@ -15,12 +15,11 @@ import java.util.List;
 public class BookingStatusServiceImpl {
     private final BookingRepository bookingRepository;
 
-    // Se ejecuta cada hora
     @Scheduled(fixedRate = 60 * 60 * 1000)
     public void updateBookingStatuses() {
         LocalDate today = LocalDate.now();
 
-        // De PENDING a CONFIRMED
+        // From PENDING to CONFIRMED
         List<Booking> pendingBookings = bookingRepository.findByStatus(BookingStatus.PENDING);
         for (Booking b : pendingBookings) {
             if (!b.getDateCheckIn().isAfter(today)) {
@@ -29,7 +28,7 @@ public class BookingStatusServiceImpl {
             }
         }
 
-        // De CONFIRMED a COMPLETED
+        // From CONFIRMED to COMPLETED
         List<Booking> confirmedBookings = bookingRepository.findByStatus(BookingStatus.CONFIRMED);
         for (Booking b : confirmedBookings) {
             if (!b.getDateCheckOut().isAfter(today)) {

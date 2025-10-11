@@ -36,11 +36,11 @@ public class SecurityConfig {
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(req -> req
-                        // Endpoints públicos
+                        // Public Endpoints
                         .requestMatchers("/auth/**", "/users/register").permitAll()
                         .requestMatchers(HttpMethod.GET, "/accommodations/**").permitAll()
 
-                        // Endpoints de bookings
+                        // Endpoints bookings
                         .requestMatchers(HttpMethod.GET, "/bookings/{id}/detail-user").hasAnyRole("USER","GUEST")
                         .requestMatchers(HttpMethod.GET, "/bookings/{id}/detail").hasRole("HOST")
                         .requestMatchers(HttpMethod.POST, "/bookings", "/bookings/**").hasAnyRole("USER","HOST","ADMIN","GUEST")
@@ -49,16 +49,19 @@ public class SecurityConfig {
                         .requestMatchers("/bookings/my-bookings-host/**").hasRole("HOST")
                         .requestMatchers("/bookings/my-bookings-user/**").hasAnyRole("USER","ADMIN","GUEST")
 
-                        // Endpoints de accommodations protegidas
+                        // Endpoints accommodations
                         .requestMatchers(HttpMethod.POST, "/accommodations/**").hasRole("HOST")
                         .requestMatchers(HttpMethod.PATCH, "/accommodations/**").hasRole("HOST")
                         .requestMatchers(HttpMethod.DELETE, "/accommodations/**").hasRole("HOST")
                         .requestMatchers("/accommodations/my-accomodations").hasRole("HOST")
 
+                        //Endopoints for Comments
+                        .requestMatchers(HttpMethod.POST, "/comments").hasAnyRole("USER","HOST","ADMIN","GUEST")
+                        .requestMatchers(HttpMethod.POST, "/comments/answer").hasRole("HOST")
+
                         // Endpoints Images
                         .requestMatchers(HttpMethod.POST, "/images").permitAll()
 
-                        // Cualquier otro endpoint necesita autenticación
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(new JWTAuthenticationEntryPoint()))

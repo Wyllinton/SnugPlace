@@ -3,15 +3,9 @@ package com.snugplace.demo.Service.Implementation;
 import com.snugplace.demo.DTO.Comment.AnswerCommentDTO;
 import com.snugplace.demo.DTO.Comment.CreateCommentDTO;
 import com.snugplace.demo.Mappers.CommentMapper;
-import com.snugplace.demo.Model.Accommodation;
-import com.snugplace.demo.Model.Booking;
-import com.snugplace.demo.Model.Comment;
+import com.snugplace.demo.Model.*;
 import com.snugplace.demo.Model.Enums.BookingStatus;
-import com.snugplace.demo.Model.User;
-import com.snugplace.demo.Repository.AccommodationRepository;
-import com.snugplace.demo.Repository.BookingRepository;
-import com.snugplace.demo.Repository.CommentRepository;
-import com.snugplace.demo.Repository.UserRepository;
+import com.snugplace.demo.Repository.*;
 import com.snugplace.demo.Security.AuthUtils;
 import com.snugplace.demo.Service.CommentService;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 @Service
@@ -34,6 +29,7 @@ public class CommentServiceImpl implements CommentService {
     private final CommentMapper commentMapper;
     private final BookingRepository bookingRepository;
     private final AccommodationRepository accommodationRepository;
+    private final AnswerCommentRepository answerCommentRepository;
 
     @Override
     public void createComment(CreateCommentDTO createCommentDTO) throws Exception {
@@ -61,6 +57,7 @@ public class CommentServiceImpl implements CommentService {
         }
 
         Comment comment = commentMapper.toEntity(createCommentDTO);
+        comment.setDate(LocalDate.now());
         comment.setUser(booking.getUser());
         comment.setAccommodation(accommodation);
 
@@ -68,7 +65,42 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public AnswerCommentDTO answerCommentHost(Long id) throws Exception {
-        return null;
+    public void answerCommentHost(AnswerCommentDTO answerCommentDTO) throws Exception {
+
+        // 1️⃣ Obtener email del usuario autenticado (el host)
+        String email = authUtils.getAuthenticatedEmail();
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new Exception("Usuario no encontrado"));
+
+        // 2️⃣ Buscar el comentario al que se quiere responder
+        Comment comment = commentRepository.findById(answerCommentDTO.idComment())
+                .orElseThrow(() -> new Exception("Comentario no encontrado"));
+
+        // 3️⃣ Verificar que el comentario pertenece a un alojamiento del host autenticado
+        Accommodation accommodation = comment.getAccommodation();
+        if (!accommodation.getUser().getEmail().equals(user.getEmail())) {
+            throw new Exception("No puedes responder un comentario de un alojamiento que no te pertenece");
+        }
+
+        // 4️⃣ Verificar que el comentario aún no tenga una respuesta
+        boolean alreadyAnswered = answerCommentRepository.existsByCommentId(comment.getId());
+        if (alreadyAnswered) {
+            throw new Exception("Este comentario ya ha sido respondido");
+        }
+
+        // 5️⃣ Validar que la respuesta no esté vacía
+        if (answerCommentDTO.answer() == null || answerCommentDTO.answer().isBlank()) {
+            throw new Exception("La respuesta no puede estar vacía");
+        }
+
+        // 6️⃣ Crear y guardar la respuesta
+        AnswerComment answer = new AnswerComment();
+        answer.setComment(comment);
+        answer.setUser(comment.getUser());
+        answer.setAnswer(answerCommentDTO.answer());
+        answer.setDate(LocalDate.now());
+
+        answerCommentRepository.save(answer);
     }
 }

@@ -59,16 +59,4 @@ public class BookingController {
         bookingService.cancelBooking(id, reason);
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO<>(false, "Reserva cancelada exitosamente"));
     }
-
-    @GetMapping("/my-bookings-host/{id}")
-    public ResponseEntity<ResponseDTO<List<BookingDTO>>> searchFilteredBookingsHost(@Valid @PathVariable Long id) throws Exception{
-        List<BookingDTO> bookings = bookingService.searchFilteredBookingsHost(id);
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO<>(false, bookings));
-    }
-
-    @GetMapping("/my-bookings-user/{id}")
-    public ResponseEntity<ResponseDTO<List<BookingDTO>>> searchFilteredBookingsUser(@Valid @PathVariable Long id) throws Exception{
-        List<BookingDTO> bookings = bookingService.searchFilteredBookingsUser(id);
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO<>(false, bookings));
-    }
 }

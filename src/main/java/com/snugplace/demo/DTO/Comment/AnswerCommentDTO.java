@@ -8,10 +8,7 @@ import jakarta.validation.constraints.Past;
 import java.time.LocalDate;
 
 public record AnswerCommentDTO(
-        @NotNull @NotBlank Long id,
-        @NotNull @NotBlank Long idComment,
-        UserResponseDTO user,
-        @NotBlank String answer,
-        @Past LocalDate date
+        @NotNull Long idComment,
+        @NotBlank String answer
 ) {
 }

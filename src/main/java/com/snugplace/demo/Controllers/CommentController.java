@@ -23,9 +23,9 @@ public class CommentController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(false, "Comentario creado exitosamente"));
     }
 
-    @PostMapping("/{id}/answer")
-    public ResponseEntity<ResponseDTO<AnswerCommentDTO>> answerCommentHost(@PathVariable Long id) throws Exception{
-        AnswerCommentDTO answer = commentService.answerCommentHost(id);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(false, answer));
+    @PostMapping("/answer")
+    public ResponseEntity<ResponseDTO<String>> answerCommentHost(@Valid @RequestBody AnswerCommentDTO answerCommentDTO) throws Exception{
+        commentService.answerCommentHost(answerCommentDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(false, "Comentario respondido exitosamente"));
     }
 }

@@ -68,6 +68,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         String textContent = """
             ¡Hola %s!
             
+            ==================================
+            NOTIFICACIÓN DE SEGURIDAD
+            ==================================
+            
             Hemos recibido una solicitud para restablecer tu contraseña.
             
             🔢 Tu código de recuperación es: %s
@@ -115,6 +119,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         String subject = "✅ Contraseña restablecida con éxito";
         String textContent = """
             ¡Hola %s!
+            
+            ==================================
+            NOTIFICACIÓN DE SEGURIDAD
+            ==================================
             
             Tu contraseña ha sido actualizada correctamente el %s.
             

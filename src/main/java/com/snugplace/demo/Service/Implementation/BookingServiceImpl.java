@@ -203,16 +203,6 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDTO> searchFilteredBookingsHost(Long id) throws Exception {
-        return null;
-    }
-
-    @Override
-    public List<BookingDTO> searchFilteredBookingsUser(Long id) throws Exception {
-        return null;
-    }
-
-    @Override
     public void confirmBooking(Long id) throws Exception {
         String email = authUtils.getAuthenticatedEmail();
         User host = userRepository.findByEmail(email)

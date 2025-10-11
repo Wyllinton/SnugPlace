@@ -1,0 +1,22 @@
+### Comment HTTP tests for CommentServiceImpl via CommentController
+
+### Create Comment
+POST http://localhost:8080/comments
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiSE9TVCIsInVzZXJJZCI6IjQiLCJlbWFpbCI6InZlcmdhcmF3aWxsaW50b24wNEBnbWFpbC5jb20iLCJzdWIiOiJ2ZXJnYXJhd2lsbGludG9uMDRAZ21haWwuY29tIiwiaWF0IjoxNzYwMTk4MTYxLCJleHAiOjE3NjAyMDE3NjF9.3fXrR4GjVhZ2iMOPKl1SpLxBLoTp0EgVYPH-hmotRmDHQMMOaoNFEmM4AvymnzXIjAW4XBLxN3DGkV73rmTlwA
+
+{
+  "rating" : 5,
+  "comment" : "Muy buena experiencia en este tiepo que estuvimos alojados, gracias.",
+  "idBooking": 10
+}
+
+### Answer comment
+POST http://localhost:8080/comments/answer
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiSE9TVCIsInVzZXJJZCI6IjQiLCJlbWFpbCI6InZlcmdhcmF3aWxsaW50b24wNEBnbWFpbC5jb20iLCJzdWIiOiJ2ZXJnYXJhd2lsbGludG9uMDRAZ21haWwuY29tIiwiaWF0IjoxNzYwMTk5OTcyLCJleHAiOjE3NjAyMDM1NzJ9.q-QLqDY-O4j0v54rUbDO4ER5l6nBzOEShqw-CvXfkBAqL8lh7NazMZkxZLBX76DQlVFMXVeaUFpbh1ah8uPWaw
+
+{
+  "answer": "Me alegra que les haya gustado la estadía",
+  "idComment": 1
+}

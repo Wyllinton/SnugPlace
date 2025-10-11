@@ -229,7 +229,6 @@ public class AccommodationServiceImpl implements AccommodationService {
 
         List<Comment> comments = commentRepository.findByAccommodationId(accommodation.getId());
 
-
         return commentMapper.toDTOList(comments);
     }
 }

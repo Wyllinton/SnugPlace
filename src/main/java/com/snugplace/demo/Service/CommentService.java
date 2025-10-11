@@ -7,5 +7,5 @@ public interface CommentService {
 
     void createComment(CreateCommentDTO createCommentDTO) throws Exception;
 
-    AnswerCommentDTO answerCommentHost(Long id) throws Exception;
+    void answerCommentHost(AnswerCommentDTO answerCommentDTO) throws Exception;
 }
