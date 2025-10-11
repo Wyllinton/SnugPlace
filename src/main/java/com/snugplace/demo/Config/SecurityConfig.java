@@ -55,9 +55,13 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/accommodations/**").hasRole("HOST")
                         .requestMatchers("/accommodations/my-accomodations").hasRole("HOST")
 
-                        //Endopoints for Comments
+                        //Endpoints for Comments
                         .requestMatchers(HttpMethod.POST, "/comments").hasAnyRole("USER","HOST","ADMIN","GUEST")
                         .requestMatchers(HttpMethod.POST, "/comments/answer").hasRole("HOST")
+
+                        //Endpoints Metrics
+                        .requestMatchers(HttpMethod.GET, "/metrics/accommodations/{id}").hasRole("HOST")
+                        .requestMatchers(HttpMethod.GET, "/metrics/summary").hasRole("HOST")
 
                         // Endpoints Images
                         .requestMatchers(HttpMethod.POST, "/images").permitAll()

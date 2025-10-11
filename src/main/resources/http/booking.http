@@ -5,10 +5,10 @@
 ###Create booking
 POST http://localhost:8080/bookings
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiR1VFU1QiLCJ1c2VySWQiOiIxIiwiZW1haWwiOiJyb2pvQGdtYWlsLmNvbSIsInN1YiI6InJvam9AZ21haWwuY29tIiwiaWF0IjoxNzYwMTU1ODM0LCJleHAiOjE3NjAxNTk0MzR9.DVZAaWRMDr1budpmEttQ9XbyQ3sA_0k8mFkXBpiBljlPX9amQDpISxZtm4bHGAji2PjjgFMU2Jm0dtuyLZ7mEg
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiR1VFU1QiLCJ1c2VySWQiOiIxIiwiZW1haWwiOiJyb2pvQGdtYWlsLmNvbSIsInN1YiI6InJvam9AZ21haWwuY29tIiwiaWF0IjoxNzYwMjAxMjU4LCJleHAiOjE3NjAyMDQ4NTh9.5LVp_U3tSXdw_cg5aGNK0_-oPNdDFtI1zQcN87goflaFOZWesMNZiiexwDs0eIIvpexxN0X4rZCtm929EoJ08g
 
 {
-  "idAccommodation": 7,
+  "idAccommodation": 6,
   "dateCheckIn": "2025-10-18",
   "dateCheckOut": "2025-10-20",
   "guestsCount": 4,

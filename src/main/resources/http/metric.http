@@ -1,0 +1,22 @@
+### Metric HTTP tests for MetricServiceImpl via MetricController
+@id = 6
+
+### Accommodation's metric
+GET http://localhost:8080/metrics/accommodations/{{id}}
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiSE9TVCIsInVzZXJJZCI6IjQiLCJlbWFpbCI6InZlcmdhcmF3aWxsaW50b24wNEBnbWFpbC5jb20iLCJzdWIiOiJ2ZXJnYXJhd2lsbGludG9uMDRAZ21haWwuY29tIiwiaWF0IjoxNzYwMjAyNzk2LCJleHAiOjE3NjAyMDYzOTZ9.YYAztwgAhmPi0dqA7at0On4d3icqwiuCXBi2drmSJMqyHb86-ANqkdLfISl39MJd1NlwWgmmuBVGxCkBX-RTpQ
+
+{
+  "firstDate": "2025-09-30",
+  "lasDate": "2025-11-01"
+}
+
+### Host's metric
+GET http://localhost:8080/metrics/metrics/summary
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiSE9TVCIsInVzZXJJZCI6IjQiLCJlbWFpbCI6InZlcmdhcmF3aWxsaW50b24wNEBnbWFpbC5jb20iLCJzdWIiOiJ2ZXJnYXJhd2lsbGludG9uMDRAZ21haWwuY29tIiwiaWF0IjoxNzYwMjAzODk3LCJleHAiOjE3NjAyMDc0OTd9.L8TnqAVrZaTGpPwsSnZhwxR9et-7t5PqJBnNY1QNAaXVH4ICrPGQMXageOcVE0TTnfleIST_KHZUWRnWgbUtFw
+
+{
+  "firstDate": "2025-09-30",
+  "lasDate": "2025-11-01"
+}

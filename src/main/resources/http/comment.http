@@ -3,12 +3,12 @@
 ### Create Comment
 POST http://localhost:8080/comments
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiSE9TVCIsInVzZXJJZCI6IjQiLCJlbWFpbCI6InZlcmdhcmF3aWxsaW50b24wNEBnbWFpbC5jb20iLCJzdWIiOiJ2ZXJnYXJhd2lsbGludG9uMDRAZ21haWwuY29tIiwiaWF0IjoxNzYwMTk4MTYxLCJleHAiOjE3NjAyMDE3NjF9.3fXrR4GjVhZ2iMOPKl1SpLxBLoTp0EgVYPH-hmotRmDHQMMOaoNFEmM4AvymnzXIjAW4XBLxN3DGkV73rmTlwA
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiR1VFU1QiLCJ1c2VySWQiOiIxIiwiZW1haWwiOiJyb2pvQGdtYWlsLmNvbSIsInN1YiI6InJvam9AZ21haWwuY29tIiwiaWF0IjoxNzYwMjAxMjU4LCJleHAiOjE3NjAyMDQ4NTh9.5LVp_U3tSXdw_cg5aGNK0_-oPNdDFtI1zQcN87goflaFOZWesMNZiiexwDs0eIIvpexxN0X4rZCtm929EoJ08g
 
 {
-  "rating" : 5,
-  "comment" : "Muy buena experiencia en este tiepo que estuvimos alojados, gracias.",
-  "idBooking": 10
+  "rating" : 1,
+  "comment" : "No me gustó la experiencia, muy mala hijuemadre",
+  "idBooking": 11
 }
 
 ### Answer comment
