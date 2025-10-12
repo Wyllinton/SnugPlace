@@ -9,12 +9,10 @@ import com.snugplace.demo.Mappers.AccommodationMapper;
 import com.snugplace.demo.Mappers.CommentMapper;
 import com.snugplace.demo.Model.*;
 import com.snugplace.demo.Model.Enums.AccommodationStatus;
-import com.snugplace.demo.Repository.AccommodationRepository;
-import com.snugplace.demo.Repository.BookingRepository;
-import com.snugplace.demo.Repository.CommentRepository;
-import com.snugplace.demo.Repository.UserRepository;
+import com.snugplace.demo.Repository.*;
 import com.snugplace.demo.Security.AuthUtils;
 import com.snugplace.demo.Service.AccommodationService;
+import com.snugplace.demo.Service.ImageService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
@@ -54,6 +52,27 @@ public class AccommodationServiceImpl implements AccommodationService {
         Accommodation accommodation = accommodationMapper.toEntity(createAccommodationDTO);
         accommodationRepository.save(accommodation);
     }
+
+/*
+    @Override
+    @Transactional
+    public void createAccommodation(CreateAccommodationDTO dto) throws Exception {
+        Accommodation accommodation = accommodationMapper.toEntity(dto);
+
+        // Mapea las imágenes ya subidas a Cloudinary
+        Set<Image> images = dto.images().stream()
+                .map(img -> Image.builder()
+                        .url(img.url())
+                        .cloudinaryId(img.cloudinaryId())
+                        .uploadedTime(LocalDate.now())
+                        .isMainImage(img.isMainImage())
+                        .accommodationId(accommodation)
+                        .build()
+                ).collect(Collectors.toSet());
+
+        accommodation.setImages(images);
+        accommodationRepository.save(accommodation);
+    }*/
 
     @Override
     public List<AccommodationDTO> searchFilteredAccommodation(FilterAccommodationDTO filterAccommodationDTO) throws Exception {

@@ -1,53 +1,57 @@
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '3.5.5'
-	id 'io.spring.dependency-management' version '1.1.7'
+    id 'java'
+    id 'org.springframework.boot' version '3.5.5'
+    id 'io.spring.dependency-management' version '1.1.7'
 }
 
 group = 'com.snugplace'
 version = '0.0.1-SNAPSHOT'
-description = 'Backend for the SnugPlace accommodation rental application.'
+description = 'Demo project for Spring Boot'
 
 java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(21)
-	}
-}
-
-configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
-	dependencies {
-		implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-		implementation 'org.springframework.boot:spring-boot-starter-security'
-        implementation 'io.jsonwebtoken:jjwt-api:0.13.0'
-		implementation 'org.springframework.boot:spring-boot-starter-validation'
-		implementation 'org.springframework.boot:spring-boot-starter-web'
-        implementation 'org.mapstruct:mapstruct:1.6.3'
-        implementation 'org.springframework.security:spring-security-crypto'
-        implementation 'org.simplejavamail:simple-java-mail:8.12.6'
-        implementation 'org.simplejavamail:batch-module:8.12.6'
-        implementation 'com.cloudinary:cloudinary-http5:2.3.2'
-        annotationProcessor 'org.projectlombok:lombok'
-        annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
-        annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.3'
-		compileOnly 'org.projectlombok:lombok'
-		developmentOnly 'org.springframework.boot:spring-boot-devtools'
-		runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
-        runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.13.0'
-        runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.13.0'
-		testImplementation 'org.springframework.boot:spring-boot-starter-test'
-		testImplementation 'org.springframework.security:spring-security-test'
-		testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-	}
+test {
+    useJUnitPlatform()
+    jvmArgs += ['-XX:+EnableDynamicAgentLoading']
+}
+
+test {
+    useJUnitPlatform()
+}
+
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-validation' // Added for validation
+    implementation 'org.mapstruct:mapstruct:1.5.5.Final'
+    implementation 'org.springframework.security:spring-security-crypto'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'io.jsonwebtoken:jjwt-api:0.13.0'
+    implementation 'org.simplejavamail:simple-java-mail:8.12.6'
+    implementation 'org.simplejavamail:batch-module:8.12.6'
+    implementation 'com.cloudinary:cloudinary-http5:2.3.2'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.13.0'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.13.0'
+    compileOnly 'org.projectlombok:lombok' // Added for Lombok annotations
+    annotationProcessor 'org.projectlombok:lombok' // Added for Lombok
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    runtimeOnly 'com.mysql:mysql-connector-j'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
 
 tasks.named('test') {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }
