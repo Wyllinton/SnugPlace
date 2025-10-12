@@ -1,6 +1,7 @@
 package com.snugplace.demo.DTO.Accommodation;
 
 import com.snugplace.demo.DTO.Comment.CommentDTO;
+import com.snugplace.demo.DTO.ImageDTO;
 import com.snugplace.demo.DTO.User.HostDTO;
 import com.snugplace.demo.Model.Enums.AccommodationStatus;
 import com.snugplace.demo.Model.Enums.Service;
@@ -25,7 +26,7 @@ public record CreateAccommodationDTO(
         //@NotNull @PastOrPresent LocalDate publicationDate,
         @NotNull AccommodationStatus status,
         @NotNull @Size(min = 1) List<Service> services,
-        @NotNull Set<Image> images,
+        @NotNull Set<ImageDTO> images,
         Set<CommentDTO> comments
 ) {
 

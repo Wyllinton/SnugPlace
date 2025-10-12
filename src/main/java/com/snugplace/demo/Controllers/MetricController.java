@@ -5,13 +5,10 @@ import com.snugplace.demo.DTO.Metric.MetricAccommodationDTO;
 import com.snugplace.demo.DTO.Metric.MetricRequestDTO;
 import com.snugplace.demo.DTO.ResponseDTO;
 import com.snugplace.demo.Service.MetricService;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Date;
 
 @RestController
 @RequestMapping("/metrics")

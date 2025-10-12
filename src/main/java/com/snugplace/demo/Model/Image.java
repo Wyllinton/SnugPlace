@@ -26,6 +26,9 @@ public class Image {
     @Column(nullable = false)
     private boolean isMainImage;
 
+    @Column(nullable = false, length = 200)
+    private String cloudinaryId;
+
     @ManyToOne
     @JoinColumn(name = "accommodationId", nullable = false)
     private Accommodation accommodationId;
