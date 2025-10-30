@@ -5,6 +5,9 @@ public enum Service {
     AIR_CONDITIONING,
     PARKING,
     POOL,
-    PATIO,
-    BACKYARD
+    BREAKFAST,
+    PETS_ALLOWED,
+    GYM,
+    CLEANING,
+    TV
 }
