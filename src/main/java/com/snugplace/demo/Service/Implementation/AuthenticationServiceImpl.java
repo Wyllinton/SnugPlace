@@ -43,7 +43,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         claims.put("email", userDTO.email());
         claims.put("userId", userDTO.id().toString());
 
-        String token = jwtUtils.generateToken(userDTO.email(), claims);
+        String token = jwtUtils.generateToken(String.valueOf(userDTO.id()), claims);
 
         sendEnhancedLoginEmail(userDTO);
 

@@ -1,9 +1,6 @@
 package com.snugplace.demo.Service;
 
-import com.snugplace.demo.DTO.Accommodation.AccommodationDTO;
-import com.snugplace.demo.DTO.Accommodation.CreateAccommodationDTO;
-import com.snugplace.demo.DTO.Accommodation.FilterAccommodationDTO;
-import com.snugplace.demo.DTO.Accommodation.UpdateAccommodationDTO;
+import com.snugplace.demo.DTO.Accommodation.*;
 import com.snugplace.demo.DTO.Comment.CommentDTO;
 
 
@@ -28,4 +25,6 @@ public interface AccommodationService {
     List<AccommodationDTO> myAccommodations(Integer page) throws Exception;
 
     List<CommentDTO> getAccommodationsComments(Long id) throws Exception;
+
+    List<AccommodationCardDTO> searchFilteredAccommodationCards(FilterAccommodationDTO filterAccommodationDTO) throws Exception;
 }

@@ -1,9 +1,6 @@
 package com.snugplace.demo.Service.Implementation;
 
-import com.snugplace.demo.DTO.Accommodation.AccommodationDTO;
-import com.snugplace.demo.DTO.Accommodation.CreateAccommodationDTO;
-import com.snugplace.demo.DTO.Accommodation.FilterAccommodationDTO;
-import com.snugplace.demo.DTO.Accommodation.UpdateAccommodationDTO;
+import com.snugplace.demo.DTO.Accommodation.*;
 import com.snugplace.demo.DTO.Comment.CommentDTO;
 import com.snugplace.demo.Mappers.AccommodationMapper;
 import com.snugplace.demo.Mappers.CommentMapper;
@@ -250,4 +247,122 @@ public class AccommodationServiceImpl implements AccommodationService {
 
         return commentMapper.toDTOList(comments);
     }
+
+    // En AccommodationService
+    public List<AccommodationCardDTO> searchFilteredAccommodationCards(FilterAccommodationDTO filterAccommodationDTO) throws Exception {
+        // Reutiliza tu lógica existente de búsqueda
+        List<Accommodation> accommodations = searchFilteredAccommodationEntities(filterAccommodationDTO);
+
+        // Convierte a AccommodationCardDTO
+        return accommodations.stream()
+                .map(this::toAccommodationCardDTO)
+                .collect(Collectors.toList());
+    }
+
+    // Método privado que extrae tu lógica actual
+    private List<Accommodation> searchFilteredAccommodationEntities(FilterAccommodationDTO filterAccommodationDTO) throws Exception {
+        EntityManager em = entityManagerFactory.getEntityManagerFactory().createEntityManager();
+
+        try {
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery<Accommodation> cq = cb.createQuery(Accommodation.class);
+            Root<Accommodation> root = cq.from(Accommodation.class);
+
+            List<Predicate> predicates = new ArrayList<>();
+
+            if (filterAccommodationDTO.city() != null && !filterAccommodationDTO.city().isBlank()) {
+                predicates.add(cb.equal(cb.lower(root.get("city")), filterAccommodationDTO.city().toLowerCase()));
+            }
+
+            if (filterAccommodationDTO.minPrice() != null) {
+                predicates.add(cb.greaterThanOrEqualTo(root.get("priceDay"), filterAccommodationDTO.minPrice()));
+            }
+            if (filterAccommodationDTO.maxPrice() != null) {
+                predicates.add(cb.lessThanOrEqualTo(root.get("priceDay"), filterAccommodationDTO.maxPrice()));
+            }
+
+            if (filterAccommodationDTO.guestsCount() != null) {
+                predicates.add(cb.greaterThanOrEqualTo(root.get("guestsCount"), filterAccommodationDTO.guestsCount()));
+            }
+
+            predicates.add(cb.equal(root.get("status"), AccommodationStatus.ACTIVE));
+
+            if (filterAccommodationDTO.services() != null && !filterAccommodationDTO.services().isEmpty()) {
+                Join<Object, Object> joinServices = root.join("services");
+                predicates.add(joinServices.in(filterAccommodationDTO.services()));
+            }
+
+            LocalDate checkIn = filterAccommodationDTO.checkIn();
+            LocalDate checkOut = filterAccommodationDTO.checkOut();
+
+            if (checkIn != null && checkOut != null) {
+
+                Subquery<Long> subquery = cq.subquery(Long.class);
+                Root<Booking> bookingRoot = subquery.from(Booking.class);
+                subquery.select(bookingRoot.get("accommodation").get("id"));
+
+                Predicate overlap = cb.and(
+                        cb.lessThan(bookingRoot.get("checkIn"), checkOut),
+                        cb.greaterThan(bookingRoot.get("checkOut"), checkIn)
+                );
+
+                subquery.where(overlap);
+
+                predicates.add(cb.not(root.get("id").in(subquery)));
+            }
+
+            cq.select(root)
+                    .where(cb.and(predicates.toArray(new Predicate[0])))
+                    .distinct(true);
+
+            TypedQuery<Accommodation> query = em.createQuery(cq);
+
+            int page = filterAccommodationDTO.page() != null ? filterAccommodationDTO.page() : 0;
+            int pageSize = 10; // ← VALOR POR DEFECTO 10
+            query.setFirstResult(page * pageSize);
+            query.setMaxResults(pageSize);
+
+            List<Accommodation> result = query.getResultList();
+            return result;
+
+        } catch (Exception e) {
+            throw new Exception("Error al filtrar alojamientos: " + e.getMessage());
+        } finally {
+            em.close();
+        }
+    }
+
+    // Método para convertir Accommodation → AccommodationCardDTO
+    private AccommodationCardDTO toAccommodationCardDTO(Accommodation accommodation) {
+        return new AccommodationCardDTO(
+                accommodation.getId(),
+                accommodation.getTitle(),
+                accommodation.getCity(),
+                accommodation.getPriceDay(),
+                calculateAverageRating(accommodation), // Necesitas implementar esto
+                getMainImage(accommodation) // Necesitas implementar esto
+        );
+    }
+
+    private double calculateAverageRating(Accommodation accommodation) {
+        if (accommodation.getComments() == null || accommodation.getComments().isEmpty()) {
+            return 0.0;
+        }
+        return accommodation.getComments().stream()
+                .mapToDouble(comment -> comment.getRating()) // Asumiendo que Comment tiene getRating()
+                .average()
+                .orElse(0.0);
+    }
+
+    private Image getMainImage(Accommodation accommodation) {
+        if (accommodation.getImages() == null || accommodation.getImages().isEmpty()) {
+            // Crear una imagen por defecto
+            Image defaultImage = new Image();
+            defaultImage.setUrl("https://default-image.com/default.jpg");
+            return defaultImage;
+        }
+        // Obtener la primera imagen del Set
+        return accommodation.getImages().iterator().next();
+    }
+
 }

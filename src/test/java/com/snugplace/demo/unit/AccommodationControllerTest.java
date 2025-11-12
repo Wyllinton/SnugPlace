@@ -64,7 +64,7 @@ class AccommodationControllerTest {
                 4,
                 4.5,
                 AccommodationStatus.ACTIVE,
-                List.of(Service.WIFI, Service.BACKYARD),
+                List.of(Service.WIFI),
                 images,
                 Set.of()
         );

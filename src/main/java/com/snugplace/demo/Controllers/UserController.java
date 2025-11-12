@@ -39,7 +39,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO<>(false, "Perfil actualizado exitosamente"));
     }
 
-    @DeleteMapping("/{id}/profile")
+    @DeleteMapping("/{id}/profile/del")
     public ResponseEntity<ResponseDTO<String>> deleteUser(@PathVariable Long id) throws Exception{
         userService.deleteUser(id);
         return ResponseEntity.ok(new ResponseDTO<>(false, "El usuario ha sido eliminado"));

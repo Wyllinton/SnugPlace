@@ -1,9 +1,6 @@
 package com.snugplace.demo.Controllers;
 
-import com.snugplace.demo.DTO.Accommodation.AccommodationDTO;
-import com.snugplace.demo.DTO.Accommodation.CreateAccommodationDTO;
-import com.snugplace.demo.DTO.Accommodation.FilterAccommodationDTO;
-import com.snugplace.demo.DTO.Accommodation.UpdateAccommodationDTO;
+import com.snugplace.demo.DTO.Accommodation.*;
 import com.snugplace.demo.DTO.Comment.CommentDTO;
 import com.snugplace.demo.DTO.ResponseDTO;
 import com.snugplace.demo.DTO.ResponseListDTO;
@@ -26,7 +23,7 @@ public class AccommodationController {
 
     private final AccommodationService accommodationService;
 
-    @PostMapping
+    @PostMapping("{/create}")
     public ResponseEntity<ResponseDTO<String>> createAccommodation(@Valid @RequestBody CreateAccommodationDTO createAccommodationDTO) throws Exception{
         accommodationService.createAccommodation(createAccommodationDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(false, "\t\n" + "Alojamiento creado exitosamente"));
@@ -36,6 +33,17 @@ public class AccommodationController {
     public ResponseEntity<ResponseListDTO<List<AccommodationDTO>>> searchFilteredAccommodation(@Valid @RequestBody FilterAccommodationDTO filterAccommodationDTO) throws Exception{
         List<AccommodationDTO> accommodations = accommodationService.searchFilteredAccommodation(filterAccommodationDTO);
         return ResponseEntity.ok(new ResponseListDTO<>(false, "Consulta exitosa de lista de alojamientos", accommodations));
+    }
+
+    @PostMapping("/cards")
+    public ResponseEntity<ResponseListDTO<List<AccommodationCardDTO>>> searchFilteredAccommodationCards(
+            @Valid @RequestBody FilterAccommodationDTO filterAccommodationDTO) {
+        try {
+            List<AccommodationCardDTO> cards = accommodationService.searchFilteredAccommodationCards(filterAccommodationDTO);
+            return ResponseEntity.ok(new ResponseListDTO<>(false, "Consulta exitosa de cards", cards));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseListDTO<>(true, "Error: " + e.getMessage(), new ArrayList<>()));
+        }
     }
 
     @GetMapping("/{id}")

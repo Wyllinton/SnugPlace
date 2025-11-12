@@ -9,7 +9,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public record BookingDTO(
-        @NotNull @NotBlank Long id,
+        @NotNull Long id,
         @NotNull Long idAccommodation,
         @NotNull UserResponseDTO user,
         @FutureOrPresent LocalDate dateCheckIn,
