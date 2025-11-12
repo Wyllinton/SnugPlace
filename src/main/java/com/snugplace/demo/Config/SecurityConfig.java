@@ -19,6 +19,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Configuration
@@ -81,10 +82,44 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("*"));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(List.of("*"));
+
+        // ✅ CONFIGURACIÓN ACTUALIZADA CON localhost:4200
+
+        // 1. Orígenes permitidos (incluyendo tu frontend en :4200)
+        config.setAllowedOrigins(Arrays.asList(
+                "http://localhost:4200",  // ✅ Tu frontend Angular
+                "http://localhost:3000",  // React development
+                "http://localhost:5173",  // Vite development
+                "http://127.0.0.1:4200",  // Alternativa para Angular
+                "http://127.0.0.1:3000",
+                "https://tudominio.com"   // Tu dominio en producción
+        ));
+
+        // 2. Métodos HTTP permitidos
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+
+        // 3. Headers permitidos
+        config.setAllowedHeaders(Arrays.asList(
+                "Authorization",
+                "Content-Type",
+                "X-Requested-With",
+                "Accept",
+                "Origin",
+                "Access-Control-Request-Method",
+                "Access-Control-Request-Headers"
+        ));
+
+        // 4. Headers expuestos al frontend
+        config.setExposedHeaders(Arrays.asList(
+                "Authorization",
+                "Content-Disposition"
+        ));
+
+        // 5. Configuración de credenciales
         config.setAllowCredentials(true);
+
+        // 6. Tiempo de cache para preflight requests
+        config.setMaxAge(3600L); // 1 hora
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);

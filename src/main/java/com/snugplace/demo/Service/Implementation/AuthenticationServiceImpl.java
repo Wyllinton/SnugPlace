@@ -58,7 +58,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
 
         // Generate code with six digits
-        String recoveryCode = String.format("%06d", (int) (Math.random() * 1000000));
+        String recoveryCode = String.format("%04d", (int) (Math.random() * 10000));
 
         // Save the generated code (15 min)
         recoveryCodes.put(email, new RecoveryCodeData(recoveryCode, LocalDateTime.now().plusMinutes(10)));

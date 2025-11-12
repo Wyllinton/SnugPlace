@@ -1,22 +1,22 @@
 ### Accommodation HTTP tests for AccommodationServiceImpl via AccommodationController
 
 @baseUrl = http://localhost:8080
-@accommodationId = 6
+@accommodationId = 4
 @hostId = 4
 
 ### Create a new accommodation
 POST {{baseUrl}}/accommodations
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiSE9TVCIsInVzZXJJZCI6IjQiLCJlbWFpbCI6InZlcmdhcmF3aWxsaW50b24wNEBnbWFpbC5jb20iLCJzdWIiOiJ2ZXJnYXJhd2lsbGludG9uMDRAZ21haWwuY29tIiwiaWF0IjoxNzYwMTQwNTQyLCJleHAiOjE3NjAxNDQxNDJ9.gKQohT7_F32Oh34HaoLGrcX0O4RRmfNMTXuDZ5TUSRO3ivsvwRmdwV883ILDUsPlTzr992qAktsCsTHRKxHrFA
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiSE9TVCIsInVzZXJJZCI6IjIiLCJlbWFpbCI6InBhYmxvLmxvcGV6LmcyMDA1QGdtYWlsLmNvbSIsInN1YiI6InBhYmxvLmxvcGV6LmcyMDA1QGdtYWlsLmNvbSIsImlhdCI6MTc2MDI0NDUwNiwiZXhwIjoxNzYwMjQ4MTA2fQ.aqzS4nOuCJ_kc3XX90mYp5pPg_Ta3EfziSdNbXlTg3DbvDipEUI2JUG2a4TDSJnicqKmus3xm2S3UAeOpPJ2bg
 
 {
   "host": {
     "id": {{hostId}}
   },
-  "title": "Casa campestre",
+  "title": "Casa de esterilla",
   "description": "Seguridad y buenas vistas",
-  "city": "La tebaida",
-  "address": "La tebaida Cra13 #28-35",
+  "city": "Armenia",
+  "address": "Armenia Cra13 #28-35",
   "latitude": 20.5,
   "longitude": -58.633,
   "priceDay": 750000,
@@ -36,11 +36,11 @@ GET {{baseUrl}}/accommodations
 Content-Type: application/json
 
 {
-  "city": "Armenia"
+  "city": "Armenia",
 }
 
 ### Verify availability of an accommodation
-GET {{baseUrl}}/accommodations/{{accommodationId}}/availability?checkIn=2025-10-11&checkOut=2025-10-18
+GET {{baseUrl}}/accommodations/{{accommodationId}}/availability?checkIn=2025-10-11&checkOut=2025-10-13
 
 ### List my accommodations (paged)
 GET {{baseUrl}}/accommodations/my-accomodations?page=0

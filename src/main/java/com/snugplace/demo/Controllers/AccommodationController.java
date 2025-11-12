@@ -44,7 +44,7 @@ public class AccommodationController {
         return ResponseEntity.ok(new ResponseDTO<>(false, accommodationDetails));
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("/edit/{id}")
     public ResponseEntity<ResponseDTO<String>> updateAccommodation(@PathVariable Long id, @Valid @RequestBody UpdateAccommodationDTO updateAccommodationDTO) throws Exception{
         accommodationService.updateAccommodation(id, updateAccommodationDTO);
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO<>(false,"Alojamiento actualizado exitosamente"));
