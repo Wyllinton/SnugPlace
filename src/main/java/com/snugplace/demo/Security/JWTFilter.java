@@ -24,31 +24,45 @@ public class JWTFilter extends OncePerRequestFilter {
     private final JWTUtils jwtUtil;
 
     @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String path = request.getRequestURI();
+        String method = request.getMethod();
+
+        // 🔥 TODAS LAS RUTAS PÚBLICAS - NO PASARÁN POR JWT
+        return path.startsWith("/auth/") ||
+                path.equals("/users/register") ||
+                path.startsWith("/images") ||
+                (method.equals("GET") && (
+                        path.startsWith("/accommodations") ||
+                                path.equals("/accommodations") ||
+                                path.startsWith("/accommodations/")
+                ));
+    }
+
+    @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain chain) throws ServletException, IOException {
 
         String token = getToken(request);
 
         if (token == null) {
+            // 🔥 SI NO HAY TOKEN, CONTINUAR SIN AUTENTICACIÓN
             chain.doFilter(request, response);
             return;
         }
 
         try {
-            // Validar y obtener los claims del token
+            // Solo procesar tokens válidos
             Jws<Claims> payload = jwtUtil.parseJwt(token);
             Claims claims = payload.getPayload();
 
             String username = claims.getSubject();
             String role = claims.get("role", String.class);
 
-            if (username != null && role != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-
-                // 👇 Spring espera los roles con prefijo "ROLE_"
+            if (username != null && role != null) {
                 GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + role);
                 List<GrantedAuthority> authorities = List.of(authority);
 
-                // Crear la autenticación sin consultar la BD
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(username, null, authorities);
 
@@ -56,8 +70,8 @@ public class JWTFilter extends OncePerRequestFilter {
             }
 
         } catch (Exception e) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
-            return;
+            // 🔥 TOKEN INVÁLIDO: Limpiar contexto y continuar
+            SecurityContextHolder.clearContext();
         }
 
         chain.doFilter(request, response);

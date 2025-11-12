@@ -23,7 +23,7 @@ public class AccommodationController {
 
     private final AccommodationService accommodationService;
 
-    @PostMapping("{/create}")
+    @PostMapping("/create")
     public ResponseEntity<ResponseDTO<String>> createAccommodation(@Valid @RequestBody CreateAccommodationDTO createAccommodationDTO) throws Exception{
         accommodationService.createAccommodation(createAccommodationDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(false, "\t\n" + "Alojamiento creado exitosamente"));

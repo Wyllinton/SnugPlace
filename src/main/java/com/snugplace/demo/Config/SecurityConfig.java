@@ -37,38 +37,31 @@ public class SecurityConfig {
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(req -> req
-                        // Public Endpoints
-                        .requestMatchers("/auth/**", "/users/register").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/accommodations/**").permitAll()
+                        // 🔥 TODOS LOS PERMITALL AL PRINCIPIO Y MÁS ESPECÍFICOS
 
-                        // Endpoints bookings
+                        // Public Endpoints - AUTENTICACIÓN
+                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/users/register").permitAll()
+
+                        // Public Endpoints - IMÁGENES
+                        .requestMatchers(HttpMethod.POST, "/images").permitAll()
+
+                        // 🔥 CORRECCIÓN: Especificar exactamente qué endpoints GET de accommodations son públicos
+                        .requestMatchers(HttpMethod.GET, "/accommodations").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/accommodations/cards").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/accommodations/{id}").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/accommodations/search").permitAll()
+
+                        // El resto de tus reglas de autorización...
                         .requestMatchers(HttpMethod.GET, "/bookings/{id}/detail-user").hasAnyRole("USER","GUEST")
                         .requestMatchers(HttpMethod.GET, "/bookings/{id}/detail").hasRole("HOST")
                         .requestMatchers(HttpMethod.POST, "/bookings", "/bookings/**").hasAnyRole("USER","HOST","ADMIN","GUEST")
-                        .requestMatchers(HttpMethod.PUT, "/bookings/{id}/cancel").hasAnyRole("USER","HOST","ADMIN","GUEST")
-                        .requestMatchers(HttpMethod.PUT, "/bookings/{id}/confirm").hasRole("HOST")
-                        .requestMatchers("/bookings/my-bookings-host/**").hasRole("HOST")
-                        .requestMatchers("/bookings/my-bookings-user/**").hasAnyRole("USER","ADMIN","GUEST")
+                        // ... resto de tus reglas actuales
 
-                        // Endpoints accommodations
                         .requestMatchers(HttpMethod.POST, "/accommodations/**").hasRole("HOST")
                         .requestMatchers(HttpMethod.PATCH, "/accommodations/**").hasRole("HOST")
                         .requestMatchers(HttpMethod.DELETE, "/accommodations/**").hasRole("HOST")
                         .requestMatchers("/accommodations/my-accomodations").hasRole("HOST")
-
-                        //Endpoints for Comments
-                        .requestMatchers(HttpMethod.POST, "/comments").hasAnyRole("USER","HOST","ADMIN","GUEST")
-                        .requestMatchers(HttpMethod.POST, "/comments/answer").hasRole("HOST")
-
-                        //Endpoints Metrics
-                        .requestMatchers(HttpMethod.GET, "/metrics/accommodations/{id}").hasRole("HOST")
-                        .requestMatchers(HttpMethod.GET, "/metrics/summary").hasRole("HOST")
-
-                        //Endpoints Notification
-                        .requestMatchers(HttpMethod.GET, "/notifications/**").hasAnyRole("USER","HOST","ADMIN","GUEST")
-
-                        // Endpoints Images
-                        .requestMatchers(HttpMethod.POST, "/images").permitAll()
 
                         .anyRequest().authenticated()
                 )
