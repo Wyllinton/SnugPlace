@@ -33,7 +33,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO<>(false, userDTO));
     }
 
-    @PatchMapping("/{id}/profile")
+    @PatchMapping("/{id}/profile/edit")
     public ResponseEntity<ResponseDTO<String>> updateUserProfile(@PathVariable Long id, @Valid @RequestBody UpdateProfileDTO updateProfileDTO) throws Exception{
         userService.updateUserProfile(id, updateProfileDTO);
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO<>(false, "Perfil actualizado exitosamente"));
