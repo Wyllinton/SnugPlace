@@ -20,7 +20,6 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
-import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -37,10 +36,12 @@ public class SecurityConfig {
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(req -> req
-                        // 🔥 PUBLIC ENDPOINTS - AUTENTICACIÓN Y REGISTRO
+                        // 🔥 PUBLIC ENDPOINTS - AUTENTICACIÓN
                         .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/users/register").permitAll()
-                        .requestMatchers("/users/register-with-image").permitAll() // ✅ NUEVO ENDPOINT
+
+                        // 🔥 PUBLIC ENDPOINTS - USUARIOS (REGISTRO)
+                        .requestMatchers(HttpMethod.POST, "/users/register").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/users/register-with-image").permitAll()
 
                         // 🔥 PUBLIC ENDPOINTS - IMÁGENES
                         .requestMatchers(HttpMethod.POST, "/images/**").permitAll()
