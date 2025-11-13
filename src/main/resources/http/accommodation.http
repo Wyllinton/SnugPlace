@@ -36,7 +36,15 @@ GET {{baseUrl}}/accommodations
 Content-Type: application/json
 
 {
-  "city": "Armenia",
+  "city": "Armenia"
+}
+
+###Get cards
+POST {{baseUrl}}/accommodations/cards
+Content-Type: application/json
+
+{
+  "maxPrice": 1000000
 }
 
 ### Verify availability of an accommodation

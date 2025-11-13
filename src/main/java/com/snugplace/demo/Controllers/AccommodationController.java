@@ -4,6 +4,7 @@ import com.snugplace.demo.DTO.Accommodation.*;
 import com.snugplace.demo.DTO.Comment.CommentDTO;
 import com.snugplace.demo.DTO.ResponseDTO;
 import com.snugplace.demo.DTO.ResponseListDTO;
+import com.snugplace.demo.Model.Accommodation;
 import com.snugplace.demo.Service.AccommodationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -36,13 +37,31 @@ public class AccommodationController {
     }
 
     @PostMapping("/cards")
-    public ResponseEntity<ResponseListDTO<List<AccommodationCardDTO>>> searchFilteredAccommodationCards(
-            @Valid @RequestBody FilterAccommodationDTO filterAccommodationDTO) {
+    public ResponseEntity<?> getAccommodationCards(@RequestBody(required = false) Map<String, Object> filters) {
         try {
-            List<AccommodationCardDTO> cards = accommodationService.searchFilteredAccommodationCards(filterAccommodationDTO);
-            return ResponseEntity.ok(new ResponseListDTO<>(false, "Consulta exitosa de cards", cards));
+            System.out.println("🎯 Endpoint /cards llamado con filtros: " + filters);
+
+            List<Accommodation> accommodations = accommodationService.getAccommodationCards(filters);
+
+            System.out.println("✅ Alojamientos encontrados: " + accommodations.size());
+
+            return ResponseEntity.ok().body(Map.of(
+                    "error", false,
+                    "message", "Alojamientos obtenidos exitosamente",
+                    "data", accommodations,
+                    "count", accommodations.size()
+            ));
+
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ResponseListDTO<>(true, "Error: " + e.getMessage(), new ArrayList<>()));
+            System.out.println("❌ ERROR en controller /cards: " + e.getMessage());
+            e.printStackTrace();
+
+            return ResponseEntity.badRequest().body(Map.of(
+                    "error", true,
+                    "message", "Error: " + e.getMessage(),
+                    "data", List.of(),
+                    "count", 0
+            ));
         }
     }
 

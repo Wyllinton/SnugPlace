@@ -2,11 +2,13 @@ package com.snugplace.demo.Service;
 
 import com.snugplace.demo.DTO.Accommodation.*;
 import com.snugplace.demo.DTO.Comment.CommentDTO;
+import com.snugplace.demo.Model.Accommodation;
 
 
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 public interface AccommodationService {
 
@@ -27,4 +29,6 @@ public interface AccommodationService {
     List<CommentDTO> getAccommodationsComments(Long id) throws Exception;
 
     List<AccommodationCardDTO> searchFilteredAccommodationCards(FilterAccommodationDTO filterAccommodationDTO) throws Exception;
+
+    List<Accommodation> getAccommodationCards(Map<String, Object> filters);
 }

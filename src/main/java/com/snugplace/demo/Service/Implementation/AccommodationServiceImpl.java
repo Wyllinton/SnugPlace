@@ -248,7 +248,7 @@ public class AccommodationServiceImpl implements AccommodationService {
         return commentMapper.toDTOList(comments);
     }
 
-    // En AccommodationService
+    @Transactional
     public List<AccommodationCardDTO> searchFilteredAccommodationCards(FilterAccommodationDTO filterAccommodationDTO) throws Exception {
         // Reutiliza tu lógica existente de búsqueda
         List<Accommodation> accommodations = searchFilteredAccommodationEntities(filterAccommodationDTO);
@@ -363,6 +363,44 @@ public class AccommodationServiceImpl implements AccommodationService {
         }
         // Obtener la primera imagen del Set
         return accommodation.getImages().iterator().next();
+    }
+
+
+
+
+    @Override
+    @Transactional
+    public List<Accommodation> getAccommodationCards(Map<String, Object> filters) {
+        try {
+            System.out.println("🎯 Filtros recibidos en service: " + filters);
+
+            // Si hay filtro de precio máximo
+            if (filters != null && filters.containsKey("maxPrice")) {
+                Double maxPrice = null;
+                Object priceFilter = filters.get("maxPrice");
+
+                // Convertir el valor a Double
+                if (priceFilter instanceof Number) {
+                    maxPrice = ((Number) priceFilter).doubleValue();
+                } else if (priceFilter instanceof String) {
+                    maxPrice = Double.parseDouble((String) priceFilter);
+                }
+
+                if (maxPrice != null && maxPrice > 0) {
+                    System.out.println("💰 Filtrando por precio máximo: " + maxPrice);
+                    return accommodationRepository.findAllWithImagesAndCommentsByMaxPrice(maxPrice);
+                }
+            }
+
+            // Si no hay filtros o el filtro de precio no es válido, devolver todos
+            System.out.println("🔍 Buscando todos los alojamientos activos");
+            return accommodationRepository.findAllWithImagesAndComments();
+
+        } catch (Exception e) {
+            System.out.println("❌ ERROR en AccommodationService.getAccommodationCards: " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("Error al obtener alojamientos: " + e.getMessage());
+        }
     }
 
 }

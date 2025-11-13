@@ -48,7 +48,7 @@ public class SecurityConfig {
 
                         // 🔥 CORRECCIÓN: Especificar exactamente qué endpoints GET de accommodations son públicos
                         .requestMatchers(HttpMethod.GET, "/accommodations").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/accommodations/cards").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/accommodations/cards").permitAll()
                         .requestMatchers(HttpMethod.GET, "/accommodations/{id}").permitAll()
                         .requestMatchers(HttpMethod.GET, "/accommodations/search").permitAll()
 

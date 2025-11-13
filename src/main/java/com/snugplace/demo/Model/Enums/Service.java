@@ -9,5 +9,7 @@ public enum Service {
     PETS_ALLOWED,
     GYM,
     CLEANING,
-    TV
+    TV,
+    PATIO,
+    BACKYARD
 }
