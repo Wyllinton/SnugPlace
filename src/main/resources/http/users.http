@@ -8,14 +8,14 @@ POST http://localhost:8080/users/register
 Content-Type: application/json
 
 {
-  "name": "Juan Pablo",
-  "email": "juan.pablo.lopez.gomez2005@gmail.com",
+  "name": "Juan Pablo Imagenes",
+  "email": "juanp@gmail.com",
   "password": "admin12345",
-  "phoneNumber": "304567645",
-  "birthDate": "2005-08-20",
+  "phoneNumber": "231321312",
+  "birthDate": "2005-07-30",
   "role": "USER",
   "description": "Hola soy Pablo, conocido como Juanpa y soy el co-creador de esta app",
-  "profilePhoto": ""
+  "profilePhoto": "C:/Users/LENOVO/Pictures/Screenshots/Captura de pantalla 2025-11-12 102557.png"
 }
 
 ### Get user profile
@@ -43,3 +43,44 @@ Content-Type: application/json
 
 ### Delete user profile
 DELETE {{baseUrl}}/users/{{userId}}/profile
+
+
+
+### Registro con imagen - COPIA EL ARCHIVO AL PROYECTO TEMPORALMENTE
+POST http://localhost:8080/api/users/register-with-image
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="name"
+
+Pablo Lopez Imagen
+--WebAppBoundary
+Content-Disposition: form-data; name="email"
+
+imagenpablo@gmail.com
+--WebAppBoundary
+Content-Disposition: form-data; name="password"
+
+admin12345
+--WebAppBoundary
+Content-Disposition: form-data; name="phoneNumber"
+
+3123123123
+--WebAppBoundary
+Content-Disposition: form-data; name="birthDate"
+
+2005-07-30
+--WebAppBoundary
+Content-Disposition: form-data; name="role"
+
+USER
+--WebAppBoundary
+Content-Disposition: form-data; name="description"
+
+Soy pablo imagenes
+--WebAppBoundary
+Content-Disposition: form-data; name="profileImage"; filename="avatar.png"
+Content-Type: image/png
+
+< "C:/Users/LENOVO/Pictures/Screenshots/Captura de pantalla 2025-11-12 102557.png"
+--WebAppBoundary--

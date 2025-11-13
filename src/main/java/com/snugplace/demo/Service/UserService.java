@@ -4,6 +4,7 @@ import com.snugplace.demo.DTO.User.ChangeUserPasswordDTO;
 import com.snugplace.demo.DTO.User.CreateUserDTO;
 import com.snugplace.demo.DTO.User.UpdateProfileDTO;
 import com.snugplace.demo.DTO.User.UserDTO;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface UserService {
 
@@ -22,4 +23,6 @@ public interface UserService {
     void changeUserPassword(Long id, ChangeUserPasswordDTO changeUserPasswordDTO) throws Exception;
 
     void updatePassword(String email, String newPassword) throws Exception;
+
+    String updateProfileImage(Long userId, MultipartFile imageFile) throws Exception;
 }

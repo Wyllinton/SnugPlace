@@ -20,7 +20,7 @@ public record CreateUserDTO (
         Role role,
         UserStatus status,
         @Length(max = 300) String description,
-        @Length(max = 300) String profilePhoto)
+        String profilePhoto)
 {
 
 }
