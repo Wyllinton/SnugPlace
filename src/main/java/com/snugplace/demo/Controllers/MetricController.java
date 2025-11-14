@@ -17,7 +17,7 @@ public class MetricController {
 
     private final MetricService metricService;
 
-    @GetMapping("/accommodations/{id}")
+    @PostMapping("/accommodations/{id}")
     public ResponseEntity<ResponseDTO<MetricAccommodationDTO>> getAccommodationMetric(@PathVariable Long id, @RequestBody MetricRequestDTO metricRequestDTO) throws Exception{
         MetricAccommodationDTO metric = metricService.getAccommodationMetric(id, metricRequestDTO.firstDate(), metricRequestDTO.lasDate());
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO<>(false, metric));

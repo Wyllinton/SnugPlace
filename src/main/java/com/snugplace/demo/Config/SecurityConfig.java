@@ -59,6 +59,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PATCH, "/accommodations/edit/**").hasRole("HOST")
                         .requestMatchers(HttpMethod.DELETE, "/accommodations/**").hasRole("HOST")
 
+                        .requestMatchers(HttpMethod.POST, "/metrics/accommodations/{id}").hasRole("HOST")
+
                         .requestMatchers("/bookings/{id}/detail-user").hasAnyRole("USER", "GUEST")
                         .requestMatchers("/bookings/{id}/detail").hasRole("HOST")
                         .requestMatchers(HttpMethod.POST, "/bookings/**").hasAnyRole("USER", "HOST", "ADMIN", "GUEST")

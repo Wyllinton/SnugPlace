@@ -46,79 +46,103 @@ public class AccommodationServiceImpl implements AccommodationService {
     }
 
     @Override
-    public List<AccommodationDTO> searchFilteredAccommodation(FilterAccommodationDTO filterAccommodationDTO) throws Exception {
+    public Page<AccommodationDTO> searchFilteredAccommodation(FilterAccommodationDTO filterAccommodationDTO) throws Exception {
         EntityManager em = entityManagerFactory.getEntityManagerFactory().createEntityManager();
 
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
+
+            // ✅ CONSULTA PRINCIPAL
             CriteriaQuery<Accommodation> cq = cb.createQuery(Accommodation.class);
             Root<Accommodation> root = cq.from(Accommodation.class);
 
-            List<Predicate> predicates = new ArrayList<>();
-
-            if (filterAccommodationDTO.city() != null && !filterAccommodationDTO.city().isBlank()) {
-                predicates.add(cb.equal(cb.lower(root.get("city")), filterAccommodationDTO.city().toLowerCase()));
-            }
-
-            if (filterAccommodationDTO.minPrice() != null) {
-                predicates.add(cb.greaterThanOrEqualTo(root.get("priceDay"), filterAccommodationDTO.minPrice()));
-            }
-            if (filterAccommodationDTO.maxPrice() != null) {
-                predicates.add(cb.lessThanOrEqualTo(root.get("priceDay"), filterAccommodationDTO.maxPrice()));
-            }
-
-            if (filterAccommodationDTO.guestsCount() != null) {
-                predicates.add(cb.greaterThanOrEqualTo(root.get("guestsCount"), filterAccommodationDTO.guestsCount()));
-            }
-
-            predicates.add(cb.equal(root.get("status"), AccommodationStatus.ACTIVE));
-
-            if (filterAccommodationDTO.services() != null && !filterAccommodationDTO.services().isEmpty()) {
-                Join<Object, Object> joinServices = root.join("services");
-                predicates.add(joinServices.in(filterAccommodationDTO.services()));
-            }
-
-            LocalDate checkIn = filterAccommodationDTO.checkIn();
-            LocalDate checkOut = filterAccommodationDTO.checkOut();
-
-            if (checkIn != null && checkOut != null) {
-
-                Subquery<Long> subquery = cq.subquery(Long.class);
-                Root<Booking> bookingRoot = subquery.from(Booking.class);
-                subquery.select(bookingRoot.get("accommodation").get("id"));
-
-                Predicate overlap = cb.and(
-                        cb.lessThan(bookingRoot.get("checkIn"), checkOut),
-                        cb.greaterThan(bookingRoot.get("checkOut"), checkIn)
-                );
-
-                subquery.where(overlap);
-
-                predicates.add(cb.not(root.get("id").in(subquery)));
-            }
+            List<Predicate> predicates = buildPredicates(filterAccommodationDTO, cb, root, cq);
 
             cq.select(root)
                     .where(cb.and(predicates.toArray(new Predicate[0])))
                     .distinct(true);
 
-            TypedQuery<Accommodation> query = em.createQuery(cq);
+            // ✅ CONSULTA COUNT
+            CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
+            Root<Accommodation> countRoot = countQuery.from(Accommodation.class);
 
+            List<Predicate> countPredicates = buildPredicates(filterAccommodationDTO, cb, countRoot, null);
+            countQuery.select(cb.countDistinct(countRoot))
+                    .where(cb.and(countPredicates.toArray(new Predicate[0])));
+
+            Long totalElements = em.createQuery(countQuery).getSingleResult();
+
+            // ✅ PAGINACIÓN
             int page = filterAccommodationDTO.page() != null ? filterAccommodationDTO.page() : 0;
-            int pageSize = 10;
+            int pageSize = 8; // Coincidir con frontend
+
+            TypedQuery<Accommodation> query = em.createQuery(cq);
             query.setFirstResult(page * pageSize);
             query.setMaxResults(pageSize);
 
             List<Accommodation> result = query.getResultList();
 
-            return result.stream()
+            List<AccommodationDTO> content = result.stream()
                     .map(accommodationMapper::toAccommodationDTO)
                     .collect(Collectors.toList());
 
+            return new PageImpl<>(content, PageRequest.of(page, pageSize), totalElements);
+
         } catch (Exception e) {
+            System.err.println("❌ Error en searchFilteredAccommodation: " + e.getMessage());
             throw new Exception("Error al filtrar alojamientos: " + e.getMessage());
         } finally {
-            em.close();
+            if (em != null && em.isOpen()) {
+                em.close();
+            }
         }
+    }
+
+    // ✅ MÉTODO AUXILIAR PARA PREDICADOS (si no lo tienes)
+    private List<Predicate> buildPredicates(FilterAccommodationDTO filterDTO, CriteriaBuilder cb,
+                                            Root<Accommodation> root, CriteriaQuery<?> cq) {
+        List<Predicate> predicates = new ArrayList<>();
+
+        if (filterDTO.city() != null && !filterDTO.city().isBlank()) {
+            predicates.add(cb.equal(cb.lower(root.get("city")), filterDTO.city().toLowerCase()));
+        }
+
+        if (filterDTO.minPrice() != null) {
+            predicates.add(cb.greaterThanOrEqualTo(root.get("priceDay"), filterDTO.minPrice()));
+        }
+        if (filterDTO.maxPrice() != null) {
+            predicates.add(cb.lessThanOrEqualTo(root.get("priceDay"), filterDTO.maxPrice()));
+        }
+
+        if (filterDTO.guestsCount() != null) {
+            predicates.add(cb.greaterThanOrEqualTo(root.get("guestsCount"), filterDTO.guestsCount()));
+        }
+
+        predicates.add(cb.equal(root.get("status"), AccommodationStatus.ACTIVE));
+
+        if (filterDTO.services() != null && !filterDTO.services().isEmpty()) {
+            Join<Object, Object> joinServices = root.join("services");
+            predicates.add(joinServices.in(filterDTO.services()));
+        }
+
+        LocalDate checkIn = filterDTO.checkIn();
+        LocalDate checkOut = filterDTO.checkOut();
+
+        if (checkIn != null && checkOut != null && cq != null) {
+            Subquery<Long> subquery = cq.subquery(Long.class);
+            Root<Booking> bookingRoot = subquery.from(Booking.class);
+            subquery.select(bookingRoot.get("accommodation").get("id"));
+
+            Predicate overlap = cb.and(
+                    cb.lessThan(bookingRoot.get("checkIn"), checkOut),
+                    cb.greaterThan(bookingRoot.get("checkOut"), checkIn)
+            );
+
+            subquery.where(overlap);
+            predicates.add(cb.not(root.get("id").in(subquery)));
+        }
+
+        return predicates;
     }
 
     @Override

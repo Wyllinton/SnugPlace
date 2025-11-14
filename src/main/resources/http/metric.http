@@ -1,14 +1,14 @@
 ### Metric HTTP tests for MetricServiceImpl via MetricController
-@id = 6
+@id = 19
 
 ### Accommodation's metric
-GET http://localhost:8080/metrics/accommodations/{{id}}
+POST http://localhost:8080/metrics/accommodations/{{id}}
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiSE9TVCIsInVzZXJJZCI6IjIiLCJlbWFpbCI6InBhYmxvLmxvcGV6LmcyMDA1QGdtYWlsLmNvbSIsInN1YiI6InBhYmxvLmxvcGV6LmcyMDA1QGdtYWlsLmNvbSIsImlhdCI6MTc2MjgyMTM2NywiZXhwIjoxNzYyODI0OTY3fQ.9goev8M71dhPkn2tbBu8nyH5BqXcLBnsvoaI6tMM5tsjrf2Yd9c9_0YDj0X_zfjOu7UTkescxP5wIMcgelkmag
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiSE9TVCIsInVzZXJJZCI6IjEiLCJlbWFpbCI6InZlcmdhcmF3aWxsaW50b24wNEBnbWFpbC5jb20iLCJzdWIiOiIxIiwiaWF0IjoxNzYzMTU2NzI2LCJleHAiOjE3NjMxNjAzMjZ9.jS4hZOILYlJ9DMSUkqE4r6bPCg0PX6-BytO9buaeFOOE6WYcI-HOkEes3HP5Qh181sKTwbWDcKiX0tkKNKOGfA
 
 {
   "firstDate": "2025-09-30",
-  "lasDate": "2025-11-01"
+  "lasDate": "2025-12-01"
 }
 
 ### Host's metric

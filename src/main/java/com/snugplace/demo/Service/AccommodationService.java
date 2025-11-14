@@ -13,7 +13,7 @@ public interface AccommodationService {
 
     void createAccommodation(CreateAccommodationDTO createAccommodationDTO) throws Exception;
 
-    List<AccommodationDTO> searchFilteredAccommodation(FilterAccommodationDTO filterAccommodationDTO) throws Exception;
+    Page<AccommodationDTO> searchFilteredAccommodation(FilterAccommodationDTO filterAccommodationDTO) throws Exception;
 
     AccommodationDTO accommodationsDetails(Long id) throws Exception;
 
