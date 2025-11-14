@@ -330,4 +330,52 @@ public class BookingServiceImpl implements BookingService {
 
         mailService.sendSimpleEmail(bookingDTO.user().email(), subject, textContent);
     }
+
+    @Override
+    public List<BookingDTO> getMyBookings() throws Exception {
+        Long id = authUtils.getAuthenticatedId();
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        List<Booking> bookings;
+
+        if (user.getRole().equals(Role.HOST)) {
+            bookings = bookingRepository.findBookingsByAccommodationUserId(user.getId());
+        } else {
+            bookings = bookingRepository.findBookingsByUserId(user.getId());
+        }
+
+        System.out.println("📅 Reservas encontradas: " + bookings.size());
+
+        // SOLUCIÓN: Mapear manualmente según la estructura correcta de UserResponseDTO
+        return bookings.stream()
+                .map(this::mapToBookingDTOWithoutLazyCollections)
+                .toList();
+    }
+
+    // Método auxiliar para mapear según la estructura correcta
+    private BookingDTO mapToBookingDTOWithoutLazyCollections(Booking booking) {
+        System.out.println("🔄 Mapeando booking ID: " + booking.getId());
+
+        // Crear UserResponseDTO con la estructura CORRECTA: name, email, phoneNumber
+        UserResponseDTO userDTO = new UserResponseDTO(
+                booking.getUser().getName(),
+                booking.getUser().getEmail(),
+                booking.getUser().getPhoneNumber() // Asegúrate de que User entity tenga este campo
+        );
+
+        // NO acceder a booking.getComments() - eso causa el error lazy
+
+        return new BookingDTO(
+                booking.getId(),
+                booking.getAccommodation().getId(), // Solo el ID del alojamiento
+                userDTO,
+                booking.getDateCheckIn(),
+                booking.getDateCheckOut(),
+                booking.getGuestsCount(),
+                booking.getStatus(),
+                booking.getPrice(),
+                List.of() // Lista vacía de comments para evitar el error lazy
+        );
+    }
 }

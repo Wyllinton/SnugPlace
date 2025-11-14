@@ -19,4 +19,6 @@ public interface BookingService {
     void confirmBooking(Long id) throws Exception;
 
     void cancelBookingByHost(Long id) throws Exception;
+
+    List<BookingDTO> getMyBookings() throws Exception;
 }

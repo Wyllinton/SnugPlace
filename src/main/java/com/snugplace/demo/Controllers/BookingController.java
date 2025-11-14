@@ -30,6 +30,12 @@ public class BookingController {
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO<>(false, bookings));
     }
 
+    @GetMapping("/my-bookings")
+    public ResponseEntity<ResponseDTO<List<BookingDTO>>> getMyBookings() throws Exception {
+        List<BookingDTO> bookings = bookingService.getMyBookings();
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO<>(false, bookings));
+    }
+
     @GetMapping("/{id}/detail")
     public ResponseEntity<ResponseDTO<BookingDetailDTO>> bookingDetailHost(@PathVariable Long id) throws Exception{
         BookingDetailDTO bookingDetails = bookingService.bookingDetailHost(id);
