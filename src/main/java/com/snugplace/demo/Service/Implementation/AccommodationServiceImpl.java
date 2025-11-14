@@ -221,8 +221,8 @@ public class AccommodationServiceImpl implements AccommodationService {
     @Transactional
     @Override
     public List<AccommodationDTO> myAccommodations(Integer page) throws Exception {
-        String email = authUtils.getAuthenticatedEmail();
-        User host = userRepository.findByEmail(email)
+        Long id = authUtils.getAuthenticatedEmail();
+        User host = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         Pageable pageable = (Pageable) PageRequest.of(page, 10, Sort.by("id").descending());
