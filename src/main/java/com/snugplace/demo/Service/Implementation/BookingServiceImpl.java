@@ -27,8 +27,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -340,42 +339,68 @@ public class BookingServiceImpl implements BookingService {
         List<Booking> bookings;
 
         if (user.getRole().equals(Role.HOST)) {
-            bookings = bookingRepository.findBookingsByAccommodationUserId(user.getId());
+            // 🔄 COMBINAR: Reservas como HOST + Reservas como HUÉSPED
+            List<Booking> bookingsAsHost = bookingRepository.findBookingsByAccommodationUserId(user.getId());
+            List<Booking> bookingsAsGuest = bookingRepository.findBookingsByUserId(user.getId());
+
+            System.out.println("🏠 Host " + user.getName() + ":");
+            System.out.println("   - Reservas en sus alojamientos: " + bookingsAsHost.size());
+            System.out.println("   - Reservas que ha hecho como huésped: " + bookingsAsGuest.size());
+
+            // Combinar ambas listas
+            List<Booking> combinedBookings = new ArrayList<>();
+            combinedBookings.addAll(bookingsAsHost);
+            combinedBookings.addAll(bookingsAsGuest);
+
+            // Ordenar por fecha de creación descendente
+            bookings = combinedBookings.stream()
+                    .sorted((b1, b2) -> b2.getCreatedAt().compareTo(b1.getCreatedAt()))
+                    .toList();
+
         } else {
-            bookings = bookingRepository.findBookingsByUserId(user.getId());
+            // USER normal: solo sus reservas como huésped, ordenadas
+            bookings = bookingRepository.findBookingsByUserId(user.getId()).stream()
+                    .sorted((b1, b2) -> b2.getCreatedAt().compareTo(b1.getCreatedAt()))
+                    .toList();
         }
 
-        System.out.println("📅 Reservas encontradas: " + bookings.size());
+        System.out.println("📅 Total de reservas a mostrar: " + bookings.size());
 
-        // SOLUCIÓN: Mapear manualmente según la estructura correcta de UserResponseDTO
+        // Mapear a DTO con el nuevo campo isMyOwnBooking
         return bookings.stream()
-                .map(this::mapToBookingDTOWithoutLazyCollections)
+                .map(booking -> this.mapToBookingDTOWithContext(booking, user.getId()))
                 .toList();
     }
 
-    // Método auxiliar para mapear según la estructura correcta
-    private BookingDTO mapToBookingDTOWithoutLazyCollections(Booking booking) {
+    // Método auxiliar mejorado
+    private BookingDTO mapToBookingDTOWithContext(Booking booking, Long currentUserId) {
         System.out.println("🔄 Mapeando booking ID: " + booking.getId());
 
-        // Crear UserResponseDTO con la estructura CORRECTA: name, email, phoneNumber
+        // Determinar si es una reserva propia del usuario actual
+        boolean isMyOwnBooking = booking.getUser().getId().equals(currentUserId);
+
+        System.out.println("   - Usuario reserva: " + booking.getUser().getId() + " - " + booking.getUser().getName());
+        System.out.println("   - Usuario actual: " + currentUserId);
+        System.out.println("   - Es mi reserva: " + isMyOwnBooking);
+
+        // Crear UserResponseDTO
         UserResponseDTO userDTO = new UserResponseDTO(
                 booking.getUser().getName(),
                 booking.getUser().getEmail(),
-                booking.getUser().getPhoneNumber() // Asegúrate de que User entity tenga este campo
+                booking.getUser().getPhoneNumber()
         );
-
-        // NO acceder a booking.getComments() - eso causa el error lazy
 
         return new BookingDTO(
                 booking.getId(),
-                booking.getAccommodation().getId(), // Solo el ID del alojamiento
+                booking.getAccommodation().getId(),
                 userDTO,
                 booking.getDateCheckIn(),
                 booking.getDateCheckOut(),
                 booking.getGuestsCount(),
                 booking.getStatus(),
                 booking.getPrice(),
-                List.of() // Lista vacía de comments para evitar el error lazy
+                List.of(), // Lista vacía de comments
+                isMyOwnBooking // NUEVO: contexto de la reserva
         );
     }
 }
