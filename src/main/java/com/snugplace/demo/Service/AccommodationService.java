@@ -5,9 +5,7 @@ import com.snugplace.demo.DTO.Comment.CommentDTO;
 import com.snugplace.demo.Model.Accommodation;
 import org.springframework.data.domain.Page;
 
-
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -33,5 +31,5 @@ public interface AccommodationService {
 
     List<Accommodation> getAccommodationCards(Map<String, Object> filters);
 
-    Page<AccommodationCardDTO> getAccommodationCardsPaginated(FilterAccommodationDTO filterDTO) throws Exception;
+    Page<AccommodationCardDTO> getAccommodationCardsPaginated(Map<String, Object> filters, int page, int size);
 }

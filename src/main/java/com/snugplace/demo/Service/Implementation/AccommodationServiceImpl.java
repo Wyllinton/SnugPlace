@@ -5,11 +5,11 @@ import com.snugplace.demo.DTO.Comment.CommentDTO;
 import com.snugplace.demo.Mappers.AccommodationMapper;
 import com.snugplace.demo.Mappers.CommentMapper;
 import com.snugplace.demo.Model.*;
+import com.snugplace.demo.Model.Image;
 import com.snugplace.demo.Model.Enums.AccommodationStatus;
 import com.snugplace.demo.Repository.*;
 import com.snugplace.demo.Security.AuthUtils;
 import com.snugplace.demo.Service.AccommodationService;
-import com.snugplace.demo.Service.ImageService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
@@ -19,9 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
-
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
@@ -46,27 +44,6 @@ public class AccommodationServiceImpl implements AccommodationService {
         Accommodation accommodation = accommodationMapper.toEntity(createAccommodationDTO);
         accommodationRepository.save(accommodation);
     }
-
-/*
-    @Override
-    @Transactional
-    public void createAccommodation(CreateAccommodationDTO dto) throws Exception {
-        Accommodation accommodation = accommodationMapper.toEntity(dto);
-
-        // Mapea las imágenes ya subidas a Cloudinary
-        Set<Image> images = dto.images().stream()
-                .map(img -> Image.builder()
-                        .url(img.url())
-                        .cloudinaryId(img.cloudinaryId())
-                        .uploadedTime(LocalDate.now())
-                        .isMainImage(img.isMainImage())
-                        .accommodationId(accommodation)
-                        .build()
-                ).collect(Collectors.toSet());
-
-        accommodation.setImages(images);
-        accommodationRepository.save(accommodation);
-    }*/
 
     @Override
     public List<AccommodationDTO> searchFilteredAccommodation(FilterAccommodationDTO filterAccommodationDTO) throws Exception {
@@ -194,7 +171,6 @@ public class AccommodationServiceImpl implements AccommodationService {
             Accommodation entity = accommodation.get();
             entity.setStatus(AccommodationStatus.INACTIVE);
             accommodationRepository.save(entity);
-            //Add the future booking validation
         }else{
             throw new Exception("No se encontro el alojamiento");
         }
@@ -222,7 +198,7 @@ public class AccommodationServiceImpl implements AccommodationService {
         User host = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        Pageable pageable = (Pageable) PageRequest.of(page, 10, Sort.by("id").descending());
+        Pageable pageable = PageRequest.of(page, 10, Sort.by("id").descending());
 
         Page<Accommodation> accommodationsPage = accommodationRepository
                 .findByUserAndStatus(host, AccommodationStatus.ACTIVE, pageable);
@@ -239,7 +215,6 @@ public class AccommodationServiceImpl implements AccommodationService {
         Accommodation accommodation = accommodationRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Alojamiento no encontrado"));
 
-
         List<Comment> comments = commentRepository.findByAccommodationId(accommodation.getId());
 
         return commentMapper.toDTOList(comments);
@@ -247,16 +222,13 @@ public class AccommodationServiceImpl implements AccommodationService {
 
     @Transactional
     public List<AccommodationCardDTO> searchFilteredAccommodationCards(FilterAccommodationDTO filterAccommodationDTO) throws Exception {
-        // Reutiliza tu lógica existente de búsqueda
         List<Accommodation> accommodations = searchFilteredAccommodationEntities(filterAccommodationDTO);
 
-        // Convierte a AccommodationCardDTO
         return accommodations.stream()
                 .map(this::toAccommodationCardDTO)
                 .collect(Collectors.toList());
     }
 
-    // Método privado que extrae tu lógica actual
     private List<Accommodation> searchFilteredAccommodationEntities(FilterAccommodationDTO filterAccommodationDTO) throws Exception {
         EntityManager em = entityManagerFactory.getEntityManagerFactory().createEntityManager();
 
@@ -315,7 +287,7 @@ public class AccommodationServiceImpl implements AccommodationService {
             TypedQuery<Accommodation> query = em.createQuery(cq);
 
             int page = filterAccommodationDTO.page() != null ? filterAccommodationDTO.page() : 0;
-            int pageSize = 10; // ← VALOR POR DEFECTO 10
+            int pageSize = 10;
             query.setFirstResult(page * pageSize);
             query.setMaxResults(pageSize);
 
@@ -329,15 +301,18 @@ public class AccommodationServiceImpl implements AccommodationService {
         }
     }
 
-    // Método para convertir Accommodation → AccommodationCardDTO
     private AccommodationCardDTO toAccommodationCardDTO(Accommodation accommodation) {
+        if (accommodation == null) {
+            return null;
+        }
+
         return new AccommodationCardDTO(
                 accommodation.getId(),
-                accommodation.getTitle(),
-                accommodation.getCity(),
+                accommodation.getTitle() != null ? accommodation.getTitle() : "Sin título",
+                accommodation.getCity() != null ? accommodation.getCity() : "Ciudad no especificada",
                 accommodation.getPriceDay(),
-                calculateAverageRating(accommodation), // Necesitas implementar esto
-                getMainImage(accommodation) // Necesitas implementar esto
+                calculateAverageRating(accommodation),
+                getMainImage(accommodation)
         );
     }
 
@@ -345,23 +320,26 @@ public class AccommodationServiceImpl implements AccommodationService {
         if (accommodation.getComments() == null || accommodation.getComments().isEmpty()) {
             return 0.0;
         }
+
         return accommodation.getComments().stream()
-                .mapToDouble(comment -> comment.getRating()) // Asumiendo que Comment tiene getRating()
+                .filter(comment -> comment != null)
+                .mapToDouble(Comment::getRating)
                 .average()
                 .orElse(0.0);
     }
 
     private Image getMainImage(Accommodation accommodation) {
         if (accommodation.getImages() == null || accommodation.getImages().isEmpty()) {
-            // Crear una imagen por defecto
             Image defaultImage = new Image();
-            defaultImage.setUrl("https://default-image.com/default.jpg");
+            defaultImage.setUrl("https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&h=400&fit=crop");
             return defaultImage;
         }
-        // Obtener la primera imagen del Set
-        return accommodation.getImages().iterator().next();
-    }
 
+        return accommodation.getImages().stream()
+                .filter(image -> image != null && image.isMainImage()) // ✅ Solo verificar si es true
+                .findFirst()
+                .orElse(accommodation.getImages().iterator().next());
+    }
 
     @Override
     @Transactional
@@ -369,12 +347,10 @@ public class AccommodationServiceImpl implements AccommodationService {
         try {
             System.out.println("🎯 Filtros recibidos en service: " + filters);
 
-            // Si hay filtro de precio máximo
             if (filters != null && filters.containsKey("maxPrice")) {
                 Double maxPrice = null;
                 Object priceFilter = filters.get("maxPrice");
 
-                // Convertir el valor a Double
                 if (priceFilter instanceof Number) {
                     maxPrice = ((Number) priceFilter).doubleValue();
                 } else if (priceFilter instanceof String) {
@@ -387,7 +363,6 @@ public class AccommodationServiceImpl implements AccommodationService {
                 }
             }
 
-            // Si no hay filtros o el filtro de precio no es válido, devolver todos
             System.out.println("🔍 Buscando todos los alojamientos activos");
             return accommodationRepository.findAllWithImagesAndComments();
 
@@ -398,77 +373,150 @@ public class AccommodationServiceImpl implements AccommodationService {
         }
     }
 
-
     @Override
     @Transactional
-    public Page<AccommodationCardDTO> getAccommodationCardsPaginated(FilterAccommodationDTO filterDTO) {
+    public Page<AccommodationCardDTO> getAccommodationCardsPaginated(Map<String, Object> filters, int page, int size) {
+        EntityManager em = null;
         try {
-            EntityManager em = entityManagerFactory.getEntityManagerFactory().createEntityManager();
+            em = entityManagerFactory.getEntityManagerFactory().createEntityManager();
 
             CriteriaBuilder cb = em.getCriteriaBuilder();
-            CriteriaQuery<Accommodation> cq = cb.createQuery(Accommodation.class);
-            Root<Accommodation> root = cq.from(Accommodation.class);
 
-            List<Predicate> predicates = buildPredicates(filterDTO, cb, root);
-            cq.where(cb.and(predicates.toArray(new Predicate[0]))).distinct(true);
+            // ✅ DEBUG 1: Contar TODOS los alojamientos ACTIVOS sin filtros
+            CriteriaQuery<Long> allActiveCountQuery = cb.createQuery(Long.class);
+            Root<Accommodation> allActiveRoot = allActiveCountQuery.from(Accommodation.class);
+            allActiveCountQuery.select(cb.count(allActiveRoot))
+                    .where(cb.equal(allActiveRoot.get("status"), AccommodationStatus.ACTIVE));
+            Long totalActive = em.createQuery(allActiveCountQuery).getSingleResult();
+            System.out.println("🔍 TOTAL alojamientos ACTIVOS en BD: " + totalActive);
 
-            // Consulta para contar el total
+            // ✅ DEBUG 2: Listar todos los IDs de alojamientos ACTIVOS
+            CriteriaQuery<Long> allActiveIdsQuery = cb.createQuery(Long.class);
+            Root<Accommodation> allActiveIdsRoot = allActiveIdsQuery.from(Accommodation.class);
+            allActiveIdsQuery.select(allActiveIdsRoot.get("id"))
+                    .where(cb.equal(allActiveIdsRoot.get("status"), AccommodationStatus.ACTIVE))
+                    .orderBy(cb.desc(allActiveIdsRoot.get("id")));
+            List<Long> allActiveIds = em.createQuery(allActiveIdsQuery).getResultList();
+            System.out.println("🔍 IDs de alojamientos ACTIVOS: " + allActiveIds);
+
+            // CONSULTA PARA CONTAR TOTAL CON FILTROS
             CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
             Root<Accommodation> countRoot = countQuery.from(Accommodation.class);
-            List<Predicate> countPredicates = buildPredicates(filterDTO, cb, countRoot);
+            List<Predicate> countPredicates = buildPredicates(filters, cb, countRoot);
             countQuery.select(cb.countDistinct(countRoot))
                     .where(cb.and(countPredicates.toArray(new Predicate[0])));
 
             Long totalCount = em.createQuery(countQuery).getSingleResult();
+            System.out.println("📊 Total elementos encontrados CON FILTROS: " + totalCount);
 
-            // Consulta para los resultados
-            TypedQuery<Accommodation> query = em.createQuery(cq);
+            // CONSULTA PARA DATOS
+            CriteriaQuery<Accommodation> dataQuery = cb.createQuery(Accommodation.class);
+            Root<Accommodation> dataRoot = dataQuery.from(Accommodation.class);
 
-            int page = filterDTO.page() != null ? filterDTO.page() : 0;
-            int size = 8; // Tamaño fijo de página
+            dataRoot.fetch("images", JoinType.LEFT);
+            dataRoot.fetch("comments", JoinType.LEFT);
+
+            List<Predicate> dataPredicates = buildPredicates(filters, cb, dataRoot);
+
+            dataQuery.select(dataRoot)
+                    .where(cb.and(dataPredicates.toArray(new Predicate[0])))
+                    .orderBy(cb.desc(dataRoot.get("id")));
+
+            TypedQuery<Accommodation> query = em.createQuery(dataQuery);
 
             query.setFirstResult(page * size);
             query.setMaxResults(size);
 
             List<Accommodation> result = query.getResultList();
+            System.out.println("✅ Resultados obtenidos para la página " + page + ": " + result.size());
+
+            // ✅ DEBUG 3: Mostrar qué IDs se están devolviendo
+            List<Long> resultIds = result.stream().map(Accommodation::getId).collect(Collectors.toList());
+            System.out.println("🔍 IDs en página " + page + ": " + resultIds);
+
             List<AccommodationCardDTO> content = result.stream()
                     .map(this::toAccommodationCardDTO)
+                    .filter(Objects::nonNull)
                     .collect(Collectors.toList());
-
-            em.close();
 
             return new PageImpl<>(content, PageRequest.of(page, size), totalCount);
 
         } catch (Exception e) {
+            System.out.println("❌ ERROR en getAccommodationCardsPaginated: " + e.getMessage());
+            e.printStackTrace();
             throw new RuntimeException("Error al obtener alojamientos paginados: " + e.getMessage());
+        } finally {
+            if (em != null && em.isOpen()) {
+                em.close();
+            }
         }
     }
 
-
-    private List<Predicate> buildPredicates(FilterAccommodationDTO filterDTO, CriteriaBuilder cb, Root<Accommodation> root) {
+    private List<Predicate> buildPredicates(Map<String, Object> filters, CriteriaBuilder cb, Root<Accommodation> root) {
         List<Predicate> predicates = new ArrayList<>();
 
+        // ✅ SOLO filtrar por estado ACTIVO
         predicates.add(cb.equal(root.get("status"), AccommodationStatus.ACTIVE));
 
-        if (filterDTO.city() != null && !filterDTO.city().isBlank()) {
-            predicates.add(cb.equal(cb.lower(root.get("city")), filterDTO.city().toLowerCase()));
+        // ✅ TEMPORAL: Comentar todos los otros filtros para debug
+    /*
+    if (filters != null) {
+        if (filters.containsKey("city") && filters.get("city") != null) {
+            String city = (String) filters.get("city");
+            if (!city.isBlank()) {
+                predicates.add(cb.equal(cb.lower(root.get("city")), city.toLowerCase()));
+            }
         }
 
-        if (filterDTO.minPrice() != null) {
-            predicates.add(cb.greaterThanOrEqualTo(root.get("priceDay"), filterDTO.minPrice()));
+        if (filters.containsKey("minPrice") && filters.get("minPrice") != null) {
+            Double minPrice = convertToDouble(filters.get("minPrice"));
+            if (minPrice != null) {
+                predicates.add(cb.greaterThanOrEqualTo(root.get("priceDay"), minPrice));
+            }
         }
 
-        if (filterDTO.maxPrice() != null) {
-            predicates.add(cb.lessThanOrEqualTo(root.get("priceDay"), filterDTO.maxPrice()));
+        if (filters.containsKey("maxPrice") && filters.get("maxPrice") != null) {
+            Double maxPrice = convertToDouble(filters.get("maxPrice"));
+            if (maxPrice != null) {
+                predicates.add(cb.lessThanOrEqualTo(root.get("priceDay"), maxPrice));
+            }
         }
 
-        if (filterDTO.guestsCount() != null) {
-            predicates.add(cb.greaterThanOrEqualTo(root.get("guestsCount"), filterDTO.guestsCount()));
+        if (filters.containsKey("guestsCount") && filters.get("guestsCount") != null) {
+            Integer guestsCount = convertToInteger(filters.get("guestsCount"));
+            if (guestsCount != null) {
+                predicates.add(cb.greaterThanOrEqualTo(root.get("guestsCount"), guestsCount));
+            }
         }
-
-        // ... resto de filtros
+    }
+    */
 
         return predicates;
     }
 
+    private Double convertToDouble(Object value) {
+        if (value instanceof Number) {
+            return ((Number) value).doubleValue();
+        } else if (value instanceof String) {
+            try {
+                return Double.parseDouble((String) value);
+            } catch (NumberFormatException e) {
+                return null;
+            }
+        }
+        return null;
+    }
+
+    private Integer convertToInteger(Object value) {
+        if (value instanceof Number) {
+            return ((Number) value).intValue();
+        } else if (value instanceof String) {
+            try {
+                return Integer.parseInt((String) value);
+            } catch (NumberFormatException e) {
+                return null;
+            }
+        }
+        return null;
+    }
 }

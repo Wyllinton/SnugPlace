@@ -5,7 +5,6 @@ import com.snugplace.demo.DTO.Comment.CommentDTO;
 import com.snugplace.demo.DTO.ResponseDTO;
 import com.snugplace.demo.DTO.ResponseListDTO;
 import com.snugplace.demo.Model.Accommodation;
-import com.snugplace.demo.Model.Enums.Service;
 import com.snugplace.demo.Service.AccommodationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -46,163 +45,43 @@ public class AccommodationController {
 
         try {
             System.out.println("🎯 Endpoint /cards llamado con página: " + page + ", tamaño: " + size);
-
-            // Convertir Map a FilterAccommodationDTO
-            FilterAccommodationDTO filterDTO = convertMapToFilterDTO(filters, page, size);
+            System.out.println("🔍 Filtros recibidos: " + filters);
 
             // Obtener resultados paginados
-            Page<AccommodationCardDTO> resultPage = accommodationService.getAccommodationCardsPaginated(filterDTO);
+            Page<AccommodationCardDTO> resultPage = accommodationService.getAccommodationCardsPaginated(filters, page, size);
 
             System.out.println("✅ Alojamientos encontrados: " + resultPage.getContent().size() +
                     " de " + resultPage.getTotalElements());
+            System.out.println("📊 Total páginas: " + resultPage.getTotalPages());
 
-            return ResponseEntity.ok().body(Map.of(
-                    "error", false,
-                    "message", "Alojamientos obtenidos exitosamente",
-                    "data", resultPage.getContent(),
-                    "totalElements", resultPage.getTotalElements(),
-                    "totalPages", resultPage.getTotalPages(),
-                    "currentPage", resultPage.getNumber(),
-                    "size", resultPage.getSize()
-            ));
+            // Crear respuesta estructurada
+            Map<String, Object> response = new HashMap<>();
+            response.put("error", false);
+            response.put("message", "Alojamientos obtenidos exitosamente");
+            response.put("data", resultPage.getContent());
+            response.put("totalElements", resultPage.getTotalElements());
+            response.put("totalPages", resultPage.getTotalPages());
+            response.put("currentPage", resultPage.getNumber());
+            response.put("size", resultPage.getSize());
+
+            return ResponseEntity.ok().body(response);
 
         } catch (Exception e) {
             System.out.println("❌ ERROR en controller /cards: " + e.getMessage());
             e.printStackTrace();
 
-            return ResponseEntity.badRequest().body(Map.of(
-                    "error", true,
-                    "message", "Error: " + e.getMessage(),
-                    "data", List.of(),
-                    "totalElements", 0,
-                    "totalPages", 0,
-                    "currentPage", 0,
-                    "size", 0
-            ));
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("error", true);
+            errorResponse.put("message", "Error: " + e.getMessage());
+            errorResponse.put("data", List.of());
+            errorResponse.put("totalElements", 0);
+            errorResponse.put("totalPages", 0);
+            errorResponse.put("currentPage", 0);
+            errorResponse.put("size", 0);
+
+            return ResponseEntity.badRequest().body(errorResponse);
         }
     }
-
-    private FilterAccommodationDTO convertMapToFilterDTO(Map<String, Object> filters, int page, int size) {
-        try {
-            System.out.println("🔄 Convirtiendo Map a FilterAccommodationDTO: " + filters);
-
-            // Extraer y convertir cada campo del Map
-            String city = extractString(filters, "city");
-            LocalDate checkIn = extractLocalDate(filters, "checkIn");
-            LocalDate checkOut = extractLocalDate(filters, "checkOut");
-            Double minPrice = extractDouble(filters, "minPrice");
-            Double maxPrice = extractDouble(filters, "maxPrice");
-            Integer guestsCount = extractInteger(filters, "guestsCount");
-            Set<Service> services = extractServices(filters, "services");
-
-            System.out.println("✅ Campos convertidos:");
-            System.out.println("   🔹 City: " + city);
-            System.out.println("   🔹 CheckIn: " + checkIn);
-            System.out.println("   🔹 CheckOut: " + checkOut);
-            System.out.println("   🔹 MinPrice: " + minPrice);
-            System.out.println("   🔹 MaxPrice: " + maxPrice);
-            System.out.println("   🔹 GuestsCount: " + guestsCount);
-            System.out.println("   🔹 Services: " + services);
-            System.out.println("   🔹 Page: " + page);
-
-            return new FilterAccommodationDTO(
-                    city, checkIn, checkOut, minPrice, maxPrice, guestsCount, services, page
-            );
-
-        } catch (Exception e) {
-            System.out.println("❌ Error al convertir Map a FilterAccommodationDTO: " + e.getMessage());
-            e.printStackTrace();
-            // Retornar un DTO con valores por defecto en caso de error
-            return new FilterAccommodationDTO(null, null, null, null, null, null, null, page);
-        }
-    }
-
-    private String extractString(Map<String, Object> filters, String key) {
-        if (filters == null || !filters.containsKey(key)) {
-            return null;
-        }
-        Object value = filters.get(key);
-        if (value instanceof String && !((String) value).isBlank()) {
-            return (String) value;
-        }
-        return null;
-    }
-
-    private LocalDate extractLocalDate(Map<String, Object> filters, String key) {
-        if (filters == null || !filters.containsKey(key)) {
-            return null;
-        }
-        Object value = filters.get(key);
-        try {
-            if (value instanceof String && !((String) value).isBlank()) {
-                return LocalDate.parse((String) value);
-            }
-        } catch (Exception e) {
-            System.out.println("⚠️ Error parseando fecha para " + key + ": " + value);
-        }
-        return null;
-    }
-
-    private Double extractDouble(Map<String, Object> filters, String key) {
-        if (filters == null || !filters.containsKey(key)) {
-            return null;
-        }
-        Object value = filters.get(key);
-        try {
-            if (value instanceof Number) {
-                return ((Number) value).doubleValue();
-            } else if (value instanceof String && !((String) value).isBlank()) {
-                return Double.parseDouble((String) value);
-            }
-        } catch (Exception e) {
-            System.out.println("⚠️ Error parseando double para " + key + ": " + value);
-        }
-        return null;
-    }
-
-    private Integer extractInteger(Map<String, Object> filters, String key) {
-        if (filters == null || !filters.containsKey(key)) {
-            return null;
-        }
-        Object value = filters.get(key);
-        try {
-            if (value instanceof Number) {
-                return ((Number) value).intValue();
-            } else if (value instanceof String && !((String) value).isBlank()) {
-                return Integer.parseInt((String) value);
-            }
-        } catch (Exception e) {
-            System.out.println("⚠️ Error parseando integer para " + key + ": " + value);
-        }
-        return null;
-    }
-
-    @SuppressWarnings("unchecked")
-    private Set<Service> extractServices(Map<String, Object> filters, String key) {
-        if (filters == null || !filters.containsKey(key)) {
-            return null;
-        }
-        Object value = filters.get(key);
-        try {
-            if (value instanceof List) {
-                List<String> serviceStrings = (List<String>) value;
-                Set<Service> services = new HashSet<>();
-                for (String serviceStr : serviceStrings) {
-                    try {
-                        Service service = Service.valueOf(serviceStr.toUpperCase());
-                        services.add(service);
-                    } catch (IllegalArgumentException e) {
-                        System.out.println("⚠️ Servicio no válido: " + serviceStr);
-                    }
-                }
-                return services.isEmpty() ? null : services;
-            }
-        } catch (Exception e) {
-            System.out.println("⚠️ Error parseando servicios: " + e.getMessage());
-        }
-        return null;
-    }
-
 
     @GetMapping("/{id}")
     public ResponseEntity<ResponseDTO<AccommodationDTO>> accommodationsDetails(@PathVariable Long id) throws Exception{
@@ -224,7 +103,7 @@ public class AccommodationController {
 
     @GetMapping("/{id}/availability")
     public ResponseEntity<Map<String,Object>> verifyAvailabilityAccommodation(@PathVariable Long id, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkIn,
-                                                                               @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkOut) throws Exception{
+                                                                              @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkOut) throws Exception{
         boolean available = accommodationService.verifyAvailabilityAccommodation(id, checkIn, checkOut);
         Map<String, Object> response = new HashMap<>();
         response.put("error", false);
