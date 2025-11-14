@@ -15,6 +15,8 @@ public record AccommodationDTO(
         @NotBlank @Size(max = 500) String description,
         @NotBlank String city,
         @NotBlank String address,
+        double latitude,
+        double longitude,
         @Positive double priceDay,
         @Min(1) int guestsCount,
         @DecimalMin("0.0") @DecimalMax("5.0") double averageRating,
