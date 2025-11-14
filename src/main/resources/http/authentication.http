@@ -8,7 +8,7 @@ Content-Type: application/json
 
 {
   "email": "pablo.lopez.g2005@gmail.com",
-  "password": "admin12345"
+  "password": "hola12345"
 }
 
 ### Recover password

@@ -49,8 +49,8 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public void createBooking(CreateBookingDTO createBookingDTO) throws Exception {
 
-        String email = authUtils.getAuthenticatedEmail();
-        User user = userRepository.findByEmail(email)
+        Long id = authUtils.getAuthenticatedId();
+        User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         Accommodation accommodation = accommodationRepository
@@ -98,8 +98,8 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public List<BookingDTO> searchFilteredBooking(FilteredBookingDTO filteredBookingDTO) throws Exception {
 
-        String email = authUtils.getAuthenticatedEmail();
-        User user = userRepository.findByEmail(email)
+        Long id = authUtils.getAuthenticatedId();
+        User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         if (user.getRole().equals(Role.HOST)) {
@@ -204,8 +204,8 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public void confirmBooking(Long id) throws Exception {
-        String email = authUtils.getAuthenticatedEmail();
-        User host = userRepository.findByEmail(email)
+        Long idHost = authUtils.getAuthenticatedId();
+        User host = userRepository.findById(idHost)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         Booking booking = bookingRepository.findById(id)
@@ -226,8 +226,8 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public void cancelBookingByHost(Long id) throws Exception {
 
-        String email = authUtils.getAuthenticatedEmail();
-        User host = userRepository.findByEmail(email)
+        Long idHost = authUtils.getAuthenticatedId();
+        User host = userRepository.findById(idHost)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         Booking booking = bookingRepository.findById(id)

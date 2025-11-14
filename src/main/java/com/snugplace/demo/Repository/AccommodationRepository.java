@@ -22,8 +22,6 @@ public interface AccommodationRepository extends JpaRepository<Accommodation, Lo
 
     List<Accommodation> findByUser_Id(Long userId);
 
-
-
     // 🔥 SOLUCIÓN COMPLETA: Incluir TODAS las relaciones lazy
     @Query("SELECT DISTINCT a FROM Accommodation a " +
             "LEFT JOIN FETCH a.images " +

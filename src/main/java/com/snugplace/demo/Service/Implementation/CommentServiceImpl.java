@@ -34,8 +34,8 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public void createComment(CreateCommentDTO createCommentDTO) throws Exception {
 
-        String email = authUtils.getAuthenticatedEmail();
-        User user = userRepository.findByEmail(email)
+        Long id = authUtils.getAuthenticatedId();
+        User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         Booking booking = bookingRepository.findById(createCommentDTO.idBooking())
@@ -51,7 +51,7 @@ public class CommentServiceImpl implements CommentService {
 
         Accommodation accommodation = booking.getAccommodation();
 
-        boolean alreadyCommented = commentRepository.existsByUserEmailAndAccommodation_Id(email, accommodation.getId());
+        boolean alreadyCommented = commentRepository.existsByUserIdAndAccommodation_Id(id, accommodation.getId());
         if (alreadyCommented) {
             throw new Exception("Ya has comentado este alojamiento");
         }
@@ -67,10 +67,10 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public void answerCommentHost(AnswerCommentDTO answerCommentDTO) throws Exception {
 
-        // 1️⃣ Obtener email del usuario autenticado (el host)
-        String email = authUtils.getAuthenticatedEmail();
+        // 1️⃣ Obtener id del usuario autenticado (el host)
+        Long id = authUtils.getAuthenticatedId();
 
-        User user = userRepository.findByEmail(email)
+        User user = userRepository.findById(id)
                 .orElseThrow(() -> new Exception("Usuario no encontrado"));
 
         // 2️⃣ Buscar el comentario al que se quiere responder

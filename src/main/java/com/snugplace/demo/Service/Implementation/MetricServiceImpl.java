@@ -78,8 +78,8 @@ public class MetricServiceImpl implements MetricService {
     @Override
     public MetricHostDTO getHostMetric(LocalDate firstDate, LocalDate lastDate) throws Exception {
 
-        String email = authUtils.getAuthenticatedEmail();
-        User host = userRepository.findByEmail(email)
+        Long id = authUtils.getAuthenticatedId();
+        User host = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         // 1️⃣ Obtener todos los alojamientos del host

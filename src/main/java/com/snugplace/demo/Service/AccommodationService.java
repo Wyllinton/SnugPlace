@@ -3,6 +3,7 @@ package com.snugplace.demo.Service;
 import com.snugplace.demo.DTO.Accommodation.*;
 import com.snugplace.demo.DTO.Comment.CommentDTO;
 import com.snugplace.demo.Model.Accommodation;
+import org.springframework.data.domain.Page;
 
 
 import java.time.LocalDate;
@@ -31,4 +32,6 @@ public interface AccommodationService {
     List<AccommodationCardDTO> searchFilteredAccommodationCards(FilterAccommodationDTO filterAccommodationDTO) throws Exception;
 
     List<Accommodation> getAccommodationCards(Map<String, Object> filters);
+
+    Page<AccommodationCardDTO> getAccommodationCardsPaginated(FilterAccommodationDTO filterDTO) throws Exception;
 }

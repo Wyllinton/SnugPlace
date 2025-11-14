@@ -53,22 +53,22 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/accommodations/{id}").permitAll()
                         .requestMatchers(HttpMethod.GET, "/accommodations/search").permitAll()
 
-                        // 🔥 ENDPOINTS PROTEGIDOS POR ROLES
-                        .requestMatchers(HttpMethod.GET, "/bookings/{id}/detail-user").hasAnyRole("USER","GUEST")
-                        .requestMatchers(HttpMethod.GET, "/bookings/{id}/detail").hasRole("HOST")
-                        .requestMatchers(HttpMethod.POST, "/bookings", "/bookings/**").hasAnyRole("USER","HOST","ADMIN","GUEST")
-
-                        .requestMatchers(HttpMethod.POST, "/accommodations/**").hasRole("HOST")
-                        .requestMatchers(HttpMethod.PATCH, "/accommodations/**").hasRole("HOST")
-                        .requestMatchers(HttpMethod.DELETE, "/accommodations/**").hasRole("HOST")
+                        // 🔥 ENDPOINTS PROTEGIDOS POR ROLES - CORREGIDOS
                         .requestMatchers("/accommodations/my-accomodations").hasRole("HOST")
+                        .requestMatchers(HttpMethod.POST, "/accommodations/create").hasRole("HOST")
+                        .requestMatchers(HttpMethod.PATCH, "/accommodations/edit/**").hasRole("HOST")
+                        .requestMatchers(HttpMethod.DELETE, "/accommodations/**").hasRole("HOST")
+
+                        .requestMatchers("/bookings/{id}/detail-user").hasAnyRole("USER", "GUEST")
+                        .requestMatchers("/bookings/{id}/detail").hasRole("HOST")
+                        .requestMatchers(HttpMethod.POST, "/bookings/**").hasAnyRole("USER", "HOST", "ADMIN", "GUEST")
 
                         // Cualquier otra petición requiere autenticación
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(new JWTAuthenticationEntryPoint()))
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-                .securityContext(securityContext -> securityContext.requireExplicitSave(false));
+                // ⚠️ EL FILTRO DEBE ESTAR ANTES DE LA AUTENTICACIÓN
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

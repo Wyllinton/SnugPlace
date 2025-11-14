@@ -16,10 +16,7 @@ import jakarta.persistence.criteria.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 
@@ -221,7 +218,7 @@ public class AccommodationServiceImpl implements AccommodationService {
     @Transactional
     @Override
     public List<AccommodationDTO> myAccommodations(Integer page) throws Exception {
-        Long id = authUtils.getAuthenticatedEmail();
+        Long id = authUtils.getAuthenticatedId();
         User host = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
@@ -366,8 +363,6 @@ public class AccommodationServiceImpl implements AccommodationService {
     }
 
 
-
-
     @Override
     @Transactional
     public List<Accommodation> getAccommodationCards(Map<String, Object> filters) {
@@ -401,6 +396,79 @@ public class AccommodationServiceImpl implements AccommodationService {
             e.printStackTrace();
             throw new RuntimeException("Error al obtener alojamientos: " + e.getMessage());
         }
+    }
+
+
+    @Override
+    @Transactional
+    public Page<AccommodationCardDTO> getAccommodationCardsPaginated(FilterAccommodationDTO filterDTO) {
+        try {
+            EntityManager em = entityManagerFactory.getEntityManagerFactory().createEntityManager();
+
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery<Accommodation> cq = cb.createQuery(Accommodation.class);
+            Root<Accommodation> root = cq.from(Accommodation.class);
+
+            List<Predicate> predicates = buildPredicates(filterDTO, cb, root);
+            cq.where(cb.and(predicates.toArray(new Predicate[0]))).distinct(true);
+
+            // Consulta para contar el total
+            CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
+            Root<Accommodation> countRoot = countQuery.from(Accommodation.class);
+            List<Predicate> countPredicates = buildPredicates(filterDTO, cb, countRoot);
+            countQuery.select(cb.countDistinct(countRoot))
+                    .where(cb.and(countPredicates.toArray(new Predicate[0])));
+
+            Long totalCount = em.createQuery(countQuery).getSingleResult();
+
+            // Consulta para los resultados
+            TypedQuery<Accommodation> query = em.createQuery(cq);
+
+            int page = filterDTO.page() != null ? filterDTO.page() : 0;
+            int size = 8; // Tamaño fijo de página
+
+            query.setFirstResult(page * size);
+            query.setMaxResults(size);
+
+            List<Accommodation> result = query.getResultList();
+            List<AccommodationCardDTO> content = result.stream()
+                    .map(this::toAccommodationCardDTO)
+                    .collect(Collectors.toList());
+
+            em.close();
+
+            return new PageImpl<>(content, PageRequest.of(page, size), totalCount);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error al obtener alojamientos paginados: " + e.getMessage());
+        }
+    }
+
+
+    private List<Predicate> buildPredicates(FilterAccommodationDTO filterDTO, CriteriaBuilder cb, Root<Accommodation> root) {
+        List<Predicate> predicates = new ArrayList<>();
+
+        predicates.add(cb.equal(root.get("status"), AccommodationStatus.ACTIVE));
+
+        if (filterDTO.city() != null && !filterDTO.city().isBlank()) {
+            predicates.add(cb.equal(cb.lower(root.get("city")), filterDTO.city().toLowerCase()));
+        }
+
+        if (filterDTO.minPrice() != null) {
+            predicates.add(cb.greaterThanOrEqualTo(root.get("priceDay"), filterDTO.minPrice()));
+        }
+
+        if (filterDTO.maxPrice() != null) {
+            predicates.add(cb.lessThanOrEqualTo(root.get("priceDay"), filterDTO.maxPrice()));
+        }
+
+        if (filterDTO.guestsCount() != null) {
+            predicates.add(cb.greaterThanOrEqualTo(root.get("guestsCount"), filterDTO.guestsCount()));
+        }
+
+        // ... resto de filtros
+
+        return predicates;
     }
 
 }

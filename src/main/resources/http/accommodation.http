@@ -5,20 +5,20 @@
 @hostId = 4
 
 ### Create a new accommodation
-POST {{baseUrl}}/accommodations
+POST {{baseUrl}}/accommodations/create
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiSE9TVCIsInVzZXJJZCI6IjIiLCJlbWFpbCI6InBhYmxvLmxvcGV6LmcyMDA1QGdtYWlsLmNvbSIsInN1YiI6InBhYmxvLmxvcGV6LmcyMDA1QGdtYWlsLmNvbSIsImlhdCI6MTc2MDI0NDUwNiwiZXhwIjoxNzYwMjQ4MTA2fQ.aqzS4nOuCJ_kc3XX90mYp5pPg_Ta3EfziSdNbXlTg3DbvDipEUI2JUG2a4TDSJnicqKmus3xm2S3UAeOpPJ2bg
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiSE9TVCIsInVzZXJJZCI6IjIiLCJlbWFpbCI6InBhYmxvLmxvcGV6LmcyMDA1QGdtYWlsLmNvbSIsInN1YiI6IjIiLCJpYXQiOjE3NjMwODA1MTksImV4cCI6MTc2MzA4NDExOX0.2Of-_vT_zCJQJ5nifNpzCxIexQeugU-O0wTyfY29yJj_KBXNFxGjSjOsMazCP9zJZnwlTRjW_FiMmGcGAcKuNA
 
 {
   "host": {
     "id": {{hostId}}
   },
-  "title": "Casa de esterilla",
-  "description": "Seguridad y buenas vistas",
+  "title": "Apto en Armenia-Quindío",
+  "description": "Zona exlusiva",
   "city": "Armenia",
   "address": "Armenia Cra13 #28-35",
-  "latitude": 20.5,
-  "longitude": -58.633,
+  "latitude": 4.557185,
+  "longitude": -75.656773,
   "priceDay": 750000,
   "guestsCount": 10,
   "averageRating": 0.0,
