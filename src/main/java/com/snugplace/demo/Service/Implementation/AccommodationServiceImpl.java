@@ -2,6 +2,7 @@ package com.snugplace.demo.Service.Implementation;
 
 import com.snugplace.demo.DTO.Accommodation.*;
 import com.snugplace.demo.DTO.Comment.CommentDTO;
+import com.snugplace.demo.DTO.ImageDTO;
 import com.snugplace.demo.Mappers.AccommodationMapper;
 import com.snugplace.demo.Mappers.CommentMapper;
 import com.snugplace.demo.Model.*;
@@ -40,9 +41,81 @@ public class AccommodationServiceImpl implements AccommodationService {
     private AuthUtils authUtils;
 
     @Override
+    @Transactional
     public void createAccommodation(CreateAccommodationDTO createAccommodationDTO) throws Exception {
-        Accommodation accommodation = accommodationMapper.toEntity(createAccommodationDTO);
-        accommodationRepository.save(accommodation);
+        System.out.println("🏗️ ===== CREACIÓN DE ALOJAMIENTO CON IMAGEN PRINCIPAL =====");
+
+        try {
+            // 1. VERIFICAR HOST
+            User host = userRepository.findById(createAccommodationDTO.host().id())
+                    .orElseThrow(() -> new Exception("❌ Host no encontrado"));
+
+            // 2. DETERMINAR IMAGEN PRINCIPAL
+            String mainImageUrl = null;
+            if (createAccommodationDTO.images() != null && !createAccommodationDTO.images().isEmpty()) {
+                mainImageUrl = createAccommodationDTO.images().iterator().next().url();
+                System.out.println("🖼️ Imagen principal establecida: " + mainImageUrl);
+            }
+
+            // 3. CONSTRUIR ALOJAMIENTO CON IMAGEN PRINCIPAL
+            Accommodation accommodation = Accommodation.builder()
+                    .title(createAccommodationDTO.title())
+                    .description(createAccommodationDTO.description())
+                    .city(createAccommodationDTO.city())
+                    .address(createAccommodationDTO.address())
+                    .latitude(createAccommodationDTO.latitude())
+                    .longitude(createAccommodationDTO.longitude())
+                    .priceDay(createAccommodationDTO.priceDay())
+                    .guestsCount(createAccommodationDTO.guestsCount())
+                    .status(AccommodationStatus.ACTIVE)
+                    .services(createAccommodationDTO.services() != null ?
+                            new HashSet<>(createAccommodationDTO.services()) : new HashSet<>())
+                    .mainImage(mainImageUrl) // ✅ ESTABLECER IMAGEN PRINCIPAL
+                    .user(host)
+                    .images(new HashSet<>())
+                    .comments(new ArrayList<>())
+                    .build();
+
+            System.out.println("🔨 Alojamiento construido con imagen principal, guardando...");
+
+            // 4. GUARDAR ALOJAMIENTO
+            Accommodation savedAccommodation = accommodationRepository.save(accommodation);
+            System.out.println("💾 Alojamiento guardado con ID: " + savedAccommodation.getId());
+
+            // 5. PROCESAR IMÁGENES DETALLADAS
+            if (createAccommodationDTO.images() != null && !createAccommodationDTO.images().isEmpty()) {
+                System.out.println("📸 Procesando " + createAccommodationDTO.images().size() + " imágenes...");
+
+                Set<Image> images = new HashSet<>();
+                boolean first = true;
+
+                for (ImageDTO imageDTO : createAccommodationDTO.images()) {
+                    Image image = Image.builder()
+                            .url(imageDTO.url())
+                            .cloudinaryId(imageDTO.cloudinaryId())
+                            .uploadedTime(LocalDate.now())
+                            .isMainImage(first)
+                            .accommodationId(savedAccommodation)
+                            .build();
+
+                    images.add(image);
+                    System.out.println("✅ Imagen: " + imageDTO.url() + " (Principal: " + first + ")");
+                    first = false;
+                }
+
+                // 6. ASIGNAR IMÁGENES Y GUARDAR
+                savedAccommodation.setImages(images);
+                accommodationRepository.save(savedAccommodation);
+                System.out.println("🎉 Alojamiento completado con " + images.size() + " imágenes");
+            }
+
+            System.out.println("✅ ===== CREACIÓN EXITOSA =====");
+
+        } catch (Exception e) {
+            System.err.println("❌ ERROR: " + e.getMessage());
+            e.printStackTrace();
+            throw new Exception("Error al crear alojamiento: " + e.getMessage());
+        }
     }
 
     @Override

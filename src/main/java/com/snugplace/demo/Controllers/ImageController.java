@@ -10,26 +10,51 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/images")
-@CrossOrigin(origins = "*") // Ajusta según tus necesidades
+@RequestMapping("/images")
+@CrossOrigin(origins = "*")
 public class ImageController {
 
     private final ImageService imageService;
 
     /**
-     * Endpoint para subir imagen de perfil
-     * POST /api/images/profile
+     * Endpoint único para subir imágenes - compatible con frontend existente
+     * POST /images
+     * Frontend envía: formData.append('file', file) sin parámetro folder
      */
-    @PostMapping(value = "/profile", consumes = "multipart/form-data")
-    public ResponseEntity<ResponseDTO<Map>> uploadProfileImage(
-            @RequestParam("file") MultipartFile image) {
+    @PostMapping(consumes = "multipart/form-data")
+    public ResponseEntity<ResponseDTO<Map>> uploadImage(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam(value = "folder", required = false) String folder) {
         try {
-            Map response = imageService.uploadProfileImage(image);
-            return ResponseEntity.ok(new ResponseDTO<>(false, response));
+            System.out.println("📸 Subiendo imagen - Folder: " + folder);
+            System.out.println("📁 Archivo: " + file.getOriginalFilename() + " (" + file.getSize() + " bytes)");
+
+            Map response;
+
+            if ("accommodations".equals(folder)) {
+                // Para alojamientos - usa accommodations
+                response = imageService.uploadAccommodationImage(file);
+            } else {
+                // Por defecto (incluyendo cuando folder es null) - usa profiles
+                // Esto mantiene la compatibilidad con el frontend existente de perfiles
+                response = imageService.uploadProfileImage(file);
+            }
+
+            // Formatear respuesta para que coincida con el frontend
+            Map<String, Object> formattedResponse = new HashMap<>();
+            formattedResponse.put("url", response.get("url"));
+            formattedResponse.put("cloudinaryId", response.get("public_id"));
+
+            System.out.println("✅ Imagen subida exitosamente: " + formattedResponse);
+
+            return ResponseEntity.ok(new ResponseDTO<>(false, formattedResponse));
         } catch (Exception e) {
+            System.out.println("❌ Error subiendo imagen: " + e.getMessage());
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("message", e.getMessage());
             return ResponseEntity.badRequest()
@@ -38,32 +63,101 @@ public class ImageController {
     }
 
     /**
-     * Endpoint para subir múltiples imágenes de alojamiento
-     * POST /api/images/accommodation/multiple
+     * Endpoint para subir múltiples imágenes (mantener para compatibilidad)
+     * POST /images/multiple
      */
-    @PostMapping(value = "/accommodation/multiple", consumes = "multipart/form-data")
-    public ResponseEntity<ResponseDTO<List<Map>>> uploadAccommodationImages(
-            @RequestParam("files") List<MultipartFile> images) {
+    @PostMapping(value = "/multiple", consumes = "multipart/form-data")
+    public ResponseEntity<ResponseDTO<List<Map<String, Object>>>> uploadMultipleImages(
+            @RequestParam("files") List<MultipartFile> files,
+            @RequestParam(value = "folder", required = false) String folder) {
         try {
-            List<Map> response = imageService.uploadAccommodationImages(images);
-            return ResponseEntity.ok(new ResponseDTO<>(false, response));
+            System.out.println("📸 Subiendo " + files.size() + " imágenes - Folder: " + folder);
+
+            List<Map> responses;
+
+            if ("accommodations".equals(folder)) {
+                responses = imageService.uploadAccommodationImages(files);
+            } else {
+                // Por defecto sube a profiles (para mantener compatibilidad)
+                responses = new ArrayList<>();
+                for (MultipartFile file : files) {
+                    responses.add(imageService.uploadProfileImage(file));
+                }
+            }
+
+            // Formatear respuestas
+            List<Map<String, Object>> formattedResponses = responses.stream()
+                    .map(response -> {
+                        Map<String, Object> formatted = new HashMap<>();
+                        formatted.put("url", response.get("url"));
+                        formatted.put("cloudinaryId", response.get("public_id"));
+                        return formatted;
+                    })
+                    .collect(Collectors.toList());
+
+            System.out.println("✅ " + formattedResponses.size() + " imágenes subidas exitosamente");
+
+            return ResponseEntity.ok(new ResponseDTO<>(false, formattedResponses));
         } catch (Exception e) {
+            System.out.println("❌ Error subiendo múltiples imágenes: " + e.getMessage());
             return ResponseEntity.badRequest()
                     .body(new ResponseDTO<>(true, null));
         }
     }
 
     /**
-     * Endpoint para subir una sola imagen de alojamiento
-     * POST /api/images/accommodation
+     * Endpoint específico para imágenes de perfil (mantener para compatibilidad)
+     * POST /images/profile
+     */
+    @PostMapping(value = "/profile", consumes = "multipart/form-data")
+    public ResponseEntity<ResponseDTO<Map>> uploadProfileImage(
+            @RequestParam("file") MultipartFile file) {
+        try {
+            System.out.println("👤 Subiendo imagen de perfil");
+            System.out.println("📁 Archivo: " + file.getOriginalFilename() + " (" + file.getSize() + " bytes)");
+
+            Map response = imageService.uploadProfileImage(file);
+
+            // Formatear respuesta
+            Map<String, Object> formattedResponse = new HashMap<>();
+            formattedResponse.put("url", response.get("url"));
+            formattedResponse.put("cloudinaryId", response.get("public_id"));
+
+            System.out.println("✅ Imagen de perfil subida exitosamente: " + formattedResponse);
+
+            return ResponseEntity.ok(new ResponseDTO<>(false, formattedResponse));
+        } catch (Exception e) {
+            System.out.println("❌ Error subiendo imagen de perfil: " + e.getMessage());
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", e.getMessage());
+            return ResponseEntity.badRequest()
+                    .body(new ResponseDTO<>(true, errorResponse));
+        }
+    }
+
+    /**
+     * Endpoint específico para imágenes de alojamiento (nuevo)
+     * POST /images/accommodation
      */
     @PostMapping(value = "/accommodation", consumes = "multipart/form-data")
     public ResponseEntity<ResponseDTO<Map>> uploadAccommodationImage(
-            @RequestParam("file") MultipartFile image) {
+            @RequestParam("file") MultipartFile file) {
         try {
-            Map response = imageService.uploadAccommodationImage(image);
-            return ResponseEntity.ok(new ResponseDTO<>(false, response));
+            System.out.println("🏠 Subiendo imagen de alojamiento");
+            System.out.println("📁 Archivo: " + file.getOriginalFilename() + " (" + file.getSize() + " bytes)");
+
+            Map response = imageService.uploadAccommodationImage(file);
+
+            // Formatear respuesta
+            Map<String, Object> formattedResponse = new HashMap<>();
+            formattedResponse.put("url", response.get("url"));
+            formattedResponse.put("cloudinaryId", response.get("public_id"));
+
+            System.out.println("✅ Imagen de alojamiento subida exitosamente: " + formattedResponse);
+
+            return ResponseEntity.ok(new ResponseDTO<>(false, formattedResponse));
         } catch (Exception e) {
+            System.out.println("❌ Error subiendo imagen de alojamiento: " + e.getMessage());
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("message", e.getMessage());
             return ResponseEntity.badRequest()
@@ -73,34 +167,18 @@ public class ImageController {
 
     /**
      * Endpoint para eliminar una imagen
-     * DELETE /api/images?publicId=xxxxx
+     * DELETE /images?id=xxxxx
      */
     @DeleteMapping
     public ResponseEntity<ResponseDTO<String>> deleteImage(
-            @RequestParam("publicId") String publicId) {
+            @RequestParam("id") String cloudinaryId) {
         try {
-            imageService.delete(publicId);
+            System.out.println("🗑️ Eliminando imagen: " + cloudinaryId);
+            imageService.delete(cloudinaryId);
             return ResponseEntity.ok(
                     new ResponseDTO<>(false, "Imagen eliminada exitosamente"));
         } catch (Exception e) {
-            return ResponseEntity.badRequest()
-                    .body(new ResponseDTO<>(true, e.getMessage()));
-        }
-    }
-
-    /**
-     * Endpoint para eliminar múltiples imágenes
-     * DELETE /api/images/multiple
-     * Body: ["publicId1", "publicId2", ...]
-     */
-    @DeleteMapping("/multiple")
-    public ResponseEntity<ResponseDTO<String>> deleteMultipleImages(
-            @RequestBody List<String> publicIds) {
-        try {
-            imageService.deleteMultiple(publicIds);
-            return ResponseEntity.ok(
-                    new ResponseDTO<>(false, "Imágenes eliminadas exitosamente"));
-        } catch (Exception e) {
+            System.out.println("❌ Error eliminando imagen: " + e.getMessage());
             return ResponseEntity.badRequest()
                     .body(new ResponseDTO<>(true, e.getMessage()));
         }
