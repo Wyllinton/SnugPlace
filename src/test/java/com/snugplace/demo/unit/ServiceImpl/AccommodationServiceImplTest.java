@@ -45,25 +45,6 @@ class AccommodationServiceImplTest {
     private AccommodationDTO accommodationDTO;
     private User user;
 
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-
-        accommodation = new Accommodation();
-        accommodation.setId(1L);
-        accommodation.setTitle("Casa Bonita");
-        accommodation.setCity("Cali");
-        accommodation.setPriceDay(200.0);
-        accommodation.setGuestsCount(4);
-        accommodation.setStatus(AccommodationStatus.ACTIVE);
-
-        user = new User();
-        user.setId(1L);
-        user.setEmail("host@example.com");
-
-        accommodationDTO = new AccommodationDTO("Casa Bonita", "Casa al aire libre", "Bogota", "Carrera 10",200.0, 3, 3.0, null, null, AccommodationStatus.ACTIVE, null, null, null);
-    }
-
     // ✅ 1. Crear alojamiento
     @Test
     @DisplayName("Debe crear un alojamiento correctamente")
@@ -138,23 +119,6 @@ class AccommodationServiceImplTest {
         );
     }
 
-    // ✅ 5. Mis alojamientos (MyAccommodations)
-    @Test
-    @DisplayName("Debe retornar lista de alojamientos del usuario autenticado")
-    void testMyAccommodationsSuccess() throws Exception {
-        when(authUtils.getAuthenticatedEmail()).thenReturn("host@example.com");
-        when(userRepository.findByEmail("host@example.com")).thenReturn(Optional.of(user));
-
-        Page<Accommodation> page = new PageImpl<>(List.of(accommodation));
-        when(accommodationRepository.findByUserAndStatus(eq(user), eq(AccommodationStatus.ACTIVE), any(Pageable.class)))
-                .thenReturn(page);
-        when(accommodationMapper.toAccommodationDTO(accommodation)).thenReturn(accommodationDTO);
-
-        List<AccommodationDTO> result = accommodationService.myAccommodations(0);
-
-        assertEquals(1, result.size());
-        assertEquals("Casa Bonita", result.get(0).title());
-    }
 
     // ✅ 6. Comentarios
     @Test

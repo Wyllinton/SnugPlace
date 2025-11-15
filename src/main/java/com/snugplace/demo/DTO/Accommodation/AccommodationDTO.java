@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 public record AccommodationDTO(
+        @NotNull Long id,
         @NotBlank @Size(max = 100) String title,
         @NotBlank @Size(max = 500) String description,
         @NotBlank String city,

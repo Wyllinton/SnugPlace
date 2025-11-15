@@ -263,9 +263,25 @@ public class AccommodationController {
 
     @GetMapping("/my-accomodations")
     @PreAuthorize("hasAuthority('HOST')")
-    public ResponseEntity<ResponseListDTO<List<AccommodationDTO>>> myAccommodations(@RequestParam(defaultValue = "0") Integer page) throws Exception{
-        List<AccommodationDTO> accommodations = accommodationService.myAccommodations(page);
-        return ResponseEntity.ok(new ResponseListDTO<>(false, "Consulta exitosa de lista de alojamientos", accommodations));
+    public ResponseEntity<PaginatedResponseDTO<List<AccommodationDTO>>> myAccommodations(@RequestParam(defaultValue = "0") Integer page) throws Exception {
+        System.out.println("🎯 Endpoint /my-accomodations llamado");
+
+        Page<AccommodationDTO> accommodationsPage = accommodationService.myAccommodations(page);
+
+        System.out.println("📦 Número de alojamientos: " + accommodationsPage.getContent().size());
+
+        // ✅ CORREGIR: Enviar el CONTENT directamente en "data", no el Page completo
+        PaginatedResponseDTO<List<AccommodationDTO>> response =
+                PaginatedResponseDTO.success(
+                        "Consulta exitosa de lista de alojamientos",
+                        accommodationsPage.getContent(),  // ← Solo el contenido, no el Page
+                        accommodationsPage.getTotalElements(),
+                        accommodationsPage.getTotalPages(),
+                        accommodationsPage.getNumber(),
+                        accommodationsPage.getSize()
+                );
+
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}/comments")

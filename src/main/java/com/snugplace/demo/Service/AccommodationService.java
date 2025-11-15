@@ -23,7 +23,7 @@ public interface AccommodationService {
 
     boolean verifyAvailabilityAccommodation(Long id, LocalDate checkIn, LocalDate checkOut) throws Exception;
 
-    List<AccommodationDTO> myAccommodations(Integer page) throws Exception;
+    Page<AccommodationDTO> myAccommodations(Integer page) throws Exception;
 
     List<CommentDTO> getAccommodationsComments(Long id) throws Exception;
 

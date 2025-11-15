@@ -217,7 +217,7 @@ public class AccommodationServiceImpl implements AccommodationService {
 
     @Transactional
     @Override
-    public List<AccommodationDTO> myAccommodations(Integer page) throws Exception {
+    public Page<AccommodationDTO> myAccommodations(Integer page) throws Exception {
         Long id = authUtils.getAuthenticatedId();
         User host = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
@@ -227,10 +227,7 @@ public class AccommodationServiceImpl implements AccommodationService {
         Page<Accommodation> accommodationsPage = accommodationRepository
                 .findByUserAndStatus(host, AccommodationStatus.ACTIVE, pageable);
 
-        return accommodationsPage.getContent()
-                .stream()
-                .map(accommodationMapper::toAccommodationDTO)
-                .collect(Collectors.toList());
+        return accommodationsPage.map(accommodationMapper::toAccommodationDTO);
     }
 
     @Transactional
