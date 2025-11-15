@@ -30,7 +30,7 @@ public interface AccommodationMapper {
     @Mapping(target = "mainImage", ignore = true) // Se establecerá en el servicio
     @Mapping(source = "host.id", target = "user.id")
     @Mapping(source = "services", target = "services")
-    Accommodation toEntity(CreateAccommodationDTO dto);
+    Accommodation toEntity(CreateAccommodationDTO dto); //Se COMPLETÓ EL PROYECTO
 
     default double calculateAverageRating(Accommodation accommodation) {
         if (accommodation.getComments() == null || accommodation.getComments().isEmpty()) {
