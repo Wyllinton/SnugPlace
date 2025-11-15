@@ -24,7 +24,7 @@ public record AccommodationDTO(
         @NotNull @PastOrPresent LocalDate publicationDate,
         @NotNull @Size(min = 1) Set<Service> services,
         @NotNull AccommodationStatus status,
-        @NotNull Image mainImage,
+        @NotNull String mainImage,
         @NotNull HostDTO host,
         List<CommentDTO> comments
 ) {}

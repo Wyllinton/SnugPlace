@@ -22,6 +22,7 @@ public class Accommodation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(nullable = false, length = 150)
     private String title;
 
@@ -53,6 +54,10 @@ public class Accommodation {
     @ElementCollection
     @Enumerated(EnumType.STRING)
     private Set<Service> services;
+
+    // ✅ AGREGAR CAMPO PARA IMAGEN PRINCIPAL
+    @Column(length = 500)
+    private String mainImage; // URL de la imagen principal
 
     // Use Set to avoid Hibernate MultipleBagFetchException when fetching multiple collections
     @OneToMany(mappedBy = "accommodationId", cascade = CascadeType.ALL, orphanRemoval = true)
